@@ -8,7 +8,7 @@
 *.iml
 *.cache
 *.css
-\*streams
+\*streams*
 
 # Windows image file caches
 Thumbs.db
