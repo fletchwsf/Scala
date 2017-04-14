@@ -1,9 +1,13 @@
 # Scala project files
 *.xml
+*.xls
 *.imi
 *.sbt
 *.properties
 *.class
+*.iml
+*.cache
+*.css
 
 # Windows image file caches
 Thumbs.db
