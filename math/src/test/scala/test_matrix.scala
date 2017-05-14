@@ -14,13 +14,38 @@ class test_matrix extends FunSuite {
   val b1 : Array[Array[Double]] = Array.ofDim[Double](1,1)
   b1(0)(0) = 2.0
 
- test("Add 1x1") {
+ test("Add  1x1") {
    val z1 = matrix.add(a1,b1)
    val result  = Array.ofDim[Double](1,1)
    result(0)(0) = 3.0
    assert(z1 === result, "fail")
 
  }
+
+  test("Add vector - 01") {
+    val v1 : Array[Double] = Array.ofDim[Double](1)
+    v1(0) = 1.0
+    val v2 : Array[Double] = Array.ofDim[Double](1)
+    v2(0) = 2.0
+    val result : Array[Double] = Array.ofDim[Double](1)
+    result(0) = 3.0
+    assert(result === matrix.addVectors(v1,v2), "fail" )
+  }
+
+  test("Add vector - 02") {
+    val v1 : Array[Double] = Array.ofDim[Double](2)
+    v1(0) = 1.0
+    v1(1) = 2.0
+    val v2 : Array[Double] = Array.ofDim[Double](2)
+    v2(0) = 2.0
+    v2(1) = 3.0
+    val result : Array[Double] = Array.ofDim[Double](2)
+    result(0) = 3.0
+    result(1) = 5.0
+    assert(result === matrix.addVectors(v1,v2), "fail" )
+    assert(3.0 === matrix.sumOf(v1), "fail" )
+    assert(0.0 === matrix.sumOf(matrix.subVectors(v1,v1)), "fail")
+  }
 
   test("mult 1x1"){
     val z1 = matrix.add(a1,b1)

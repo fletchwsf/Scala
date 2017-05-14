@@ -17,6 +17,7 @@ object  matrix {
     } z(i) = x(i) + y(i)
     z
   }
+
   def subVectors(x: Array[Double], y : Array[Double]) : Array[Double] = {
     var z = Array.ofDim[Double](x.length)
     for {
@@ -24,6 +25,7 @@ object  matrix {
     } z(i) = x(i) - y(i)
     z
   }
+
   def add(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
     var z = Array.ofDim[Double](x.length, y.length)
     for {
@@ -32,11 +34,13 @@ object  matrix {
     } z(i)(j) = x(i)(j) + y(i)(j)
     z
   }
+
   def sumOf(x : Array[Double]): Double = {
     var acc : Double = 0.0
     for(i <- x.indices) acc += x(i)
     acc
   }
+
   def subtract(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
     var z = Array.ofDim[Double](x.length, y.length)
     for {
@@ -45,6 +49,7 @@ object  matrix {
     } z(i)(j) = x(i)(j) - y(i)(j)
     z
   }
+
   def multiply(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
     var z = Array.ofDim[Double](x.length, y.length)
     for {
@@ -54,6 +59,7 @@ object  matrix {
     } z(i)(j) += x(i)(j) * y(k)(j)
     z
   }
+
   def gaussianElimination(a : Array[Array[Double]], d : Array[Double]): Array[Double] = {
     println("----------------------------------------")
     println("Gassuian Elimination z,d")
@@ -83,6 +89,7 @@ object  matrix {
     printVector(x)
     x
   }
+
   def conjugateGradientSolver(a : Array[Array[Double]], b : Array[Double], epsilon: Double): Array[Double] = {
     println("----------------------------------------")
     println("Conjugate Gradient Solver")
@@ -146,6 +153,7 @@ object  matrix {
     printVector(x)
     x
   }
+
   def gaussSeidel(a : Array[Array[Double]], d : Array[Double], epsilon: Double): Array[Double] = {
     println("----------------------------------------")
     println("Gauss-Seidel Solver Ax = b ")
@@ -158,9 +166,9 @@ object  matrix {
     var diff = 0.0
     val n = a.length - 1
     var stop = false
-    var ctr = 0
+    //var ctr = 0
     breakable {
-      for (ctr <- 1 to 20) {
+      for (ctr <- 1 to 100000) {
         diff = 0.0
         for (k <- 0 to n) {
           var sum1, sum2 = 0.0
@@ -190,34 +198,39 @@ object  matrix {
         }
 
         if (diff < epsilon ) {
-           println("iterations completed:" + ctr)
-            break
+          println("iterations completed:" + ctr)
+          break
         }
 
 
       }
     }
+
+
     println("solution b = ")
     printVector(x)
     x
   }
+
   def printVector(a : Array[Double]): Unit = {
     var s = new StringBuffer()
     for {
          i <- a.indices                                   // return the start and end indices of the vector
-       } s.append( a(i).toString + ", ")
+       } s.append(f" | ${a(i)}%-15.5f")
       //println(s"($i) = ${a(i)}")
     s.append("\n")
     println(s)
   }
+
   def prettyPrintDim2(a: Array[Array[Double]]) : Unit = {
     var s = new StringBuffer()
     for ( i <-  a.indices) {
-      for ( j <- a.indices) s.append( a(i)(j).toString + ", " )
+      for ( j <- a.indices) s.append(f" | ${a(i)(j)}%-15.5f" )
     s.append("\n")
     }
     println(s)
   }
+
   def prettyPrintXY(x : Array[Array[Double]], y : Array[Double]) : Unit = {
     var z = new StringBuffer()
     for {
@@ -230,6 +243,7 @@ object  matrix {
     }
     println(z)
   }
+
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
     var z = new StringBuffer()
     for {
@@ -237,8 +251,8 @@ object  matrix {
     } {
       for {
         k <- a.indices
-      } z.append(s"${a(j)(k)}x^${a.length - k} + ")
-      z.append(s" = ${b(j)}  \n")
+      } z.append(f" | ${a(j)(k)}%-15.5f" ) // x^${a.length - k}%2i + ")
+      z.append(f" = ${b(j)}%8.4f  \n")
     }
     println(z)
   }
