@@ -60,6 +60,14 @@ object  matrix {
     z
   }
 
+  def max(x: Array[Array[Double]]) : Double = {
+    var maxValue = 0.0
+    for {
+      i <- x.indices
+      j <- x.indices
+    } if ( maxValue < x(i)(j) ) maxValue = x(i)(j)
+    maxValue
+  }
   def gaussianElimination(a : Array[Array[Double]], d : Array[Double]): Array[Double] = {
     println("----------------------------------------")
     println("Gassuian Elimination z,d")
@@ -243,6 +251,22 @@ object  matrix {
     }
     println(z)
   }
+
+  def prettyPrintMatrixInt(x : Array[Array[Integer]]) : Unit = {
+    var z = new StringBuffer()
+    for {
+      j <- x.indices
+    } {
+      for {
+        k <- x.indices
+      } z.append(f"| ${x(j)(k)}%-5d ")
+      z.append(s" |\n")
+    }
+    println(z)
+  }
+
+
+
 
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
     var z = new StringBuffer()
