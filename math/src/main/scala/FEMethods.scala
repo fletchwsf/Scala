@@ -33,15 +33,42 @@ object FEMethods {
     matrix.prettyPrintDim2(K)
 
     // add single point constraints
-    val kMax : Double  = matrix.max(K)
-    println(s"maximum stiffness value:$kMax for single point constraints")
+    val C : Double  = matrix.max(K) * 10000.0
+    println(s"maximum stiffness value:$C for single point constraints")
     println("stiffness matrix with single point constraints \n")
     for(i <- constraints.indices)
-      K(constraints(i))(constraints(i)) += 1000.0 * kMax
+      K(constraints(i))(constraints(i)) += C
     matrix.prettyPrintDim2(K)
 
     // add multipoint constraints
+    // array one
+    val B = Array.ofDim[Double](3)
+    B(0) = 0.0
+    B(1) = 1.0
+    B(2) = -0.333
 
+    var kmOne = Array.ofDim[Double](2,2)
+    kmOne(0)(0) = C*B(1)*B(1)
+    kmOne(0)(1) = C*B(1)*B(2)
+    kmOne(1)(0) = C*B(1)*B(2)
+    kmOne(1)(1) = C*B(2)*B(2)
+
+    println("constraint array one \n")
+    matrix.prettyPrintDim2(kmOne)
+
+    // array two
+    B(0) = 0.0
+    B(1) = 1.0
+    B(2) = -0.833
+
+    var kmTwo = Array.ofDim[Double](2,2)
+    kmTwo(0)(0) = C*B(1)*B(1)
+    kmTwo(0)(1) = C*B(1)*B(2)
+    kmTwo(1)(0) = C*B(1)*B(2)
+    kmTwo(1)(1) = C*B(2)*B(2)
+
+    println("constraint array Two \n")
+    matrix.prettyPrintDim2(kmTwo)
 
     K
   }
