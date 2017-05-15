@@ -79,28 +79,6 @@ object FEMethods {
   }
   def main(args: Array[String]): Unit = {
 
-//    val bufferedSource = Source.fromFile("D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt")
-//    var textRow = new String()
-//    var numberRow = new Array[String](30)
-//    for (line <- bufferedSource.getLines) {
-//      //println(line.toUpperCase)
-//      // if line starts with # line is string else it is number
-//      //    or list of numbers
-//      if (line.contains("#")) {
-//        println(s"$line")
-//        textRow = line
-//      }
-//      else {
-//        val col = line.split(",").map(_.trim)
-//        for (e <- col)
-//          println(s"|$e|")
-//          numberRow = col
-//      }
-//
-//      //println(s"${cols(0)}|")
-//    }
-//    bufferedSource.close
-
     val inputFile = new ListBuffer[String]
     val bufferedSource = Source.fromFile("D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt")
       for (line <- bufferedSource.getLines)
@@ -157,11 +135,6 @@ object FEMethods {
     Kglobal(4)(0) += -177700.0
     Kglobal(0)(4) += -177700.0
     Kglobal(4)(4) +=  59259.260
-
-//    val p = Array.ofDim[Double](DOF)
-//    for (i <- p.indices) p(i) = 0.0
-//    p(4) = 30.0
-
 
     val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
 
