@@ -29,13 +29,13 @@ object FEMethods {
         }
       }
     }
-    println("original stiffness matrix")
+    println("original stiffness matrix\n")
     matrix.prettyPrintDim2(K)
 
     // add single point constraints
-    println("stiffness matrix with single point constraints")
-    val kMax : Double  = K.max
-    println(s"maximum stiffness value:$kMax")
+    val kMax : Double  = matrix.max(K)
+    println(s"maximum stiffness value:$kMax for single point constraints")
+    println("stiffness matrix with single point constraints \n")
     for(i <- constraints.indices)
       K(constraints(i))(constraints(i)) += 1000.0 * kMax
     matrix.prettyPrintDim2(K)

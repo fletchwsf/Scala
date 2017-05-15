@@ -60,6 +60,14 @@ object  matrix {
     z
   }
 
+  def max(x: Array[Array[Double]]) : Double = {
+    var maxValue = 0.0
+    for {
+      i <- x.indices
+      j <- x.indices
+    } if ( maxValue < x(i)(j) ) maxValue = x(i)(j)
+    maxValue
+  }
   def gaussianElimination(a : Array[Array[Double]], d : Array[Double]): Array[Double] = {
     println("----------------------------------------")
     println("Gassuian Elimination z,d")
