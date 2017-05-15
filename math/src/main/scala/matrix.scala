@@ -244,6 +244,22 @@ object  matrix {
     println(z)
   }
 
+  def prettyPrintMatrixInt(x : Array[Array[Integer]]) : Unit = {
+    var z = new StringBuffer()
+    for {
+      j <- x.indices
+    } {
+      for {
+        k <- x.indices
+      } z.append(f"| ${x(j)(k)}%-5d ")
+      z.append(s" |\n")
+    }
+    println(z)
+  }
+
+
+
+
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
     var z = new StringBuffer()
     for {
