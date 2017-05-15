@@ -21,6 +21,7 @@ object FEMethods {
     var sign = 1
 
     // build stiffness matrix with no constraints
+    //     note: this code includes the matrix [1,-1,-1,1] implicitly in the if statement
     for(i <- con.indices) {
       for (j <- 0 to 1 ){
         for ( k <- 0 to 1 ) {
@@ -56,6 +57,13 @@ object FEMethods {
     println("constraint array one \n")
     matrix.prettyPrintDim2(kmOne)
 
+    // insert at 1,5   note: indexs are minus -1 here
+    K(0)(0) += kmOne(0)(0)
+    K(0)(4) += kmOne(0)(1)
+    K(4)(0) += kmOne(1)(0)
+    K(4)(4) += kmOne(1)(1)
+
+
     // array two
     B(0) = 0.0
     B(1) = 1.0
@@ -69,6 +77,16 @@ object FEMethods {
 
     println("constraint array Two \n")
     matrix.prettyPrintDim2(kmTwo)
+
+    // insert at 2,5  note: indexes are -1 here
+    K(1)(1) += kmTwo(0)(0)
+    K(1)(4) += kmTwo(0)(1)
+    K(4)(1) += kmTwo(1)(0)
+    K(4)(4) += kmTwo(1)(1)
+
+    println("modified stiffness matrix\n")
+    matrix.prettyPrintDim2(K)
+
 
     K
   }
@@ -88,8 +106,8 @@ object FEMethods {
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
-      anArray(i)(0) = col(1).toInt
-      anArray(i)(1) = col(2).toInt
+      anArray(i)(0) = col(1).toInt - 1
+      anArray(i)(1) = col(2).toInt - 1
     }
     println(s"loading array:$lineName")
     prettyPrintMatrixInt(anArray)
@@ -132,6 +150,7 @@ object FEMethods {
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
+
     var connectionTable = Array.ofDim[Integer](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
@@ -151,22 +170,7 @@ object FEMethods {
 
     Kglobal = kBuilder(connectionTable, constraints, DOF, eArea, eLength, eModulus)
 
-
-    Kglobal(2)(2) += 530000.0
-    Kglobal(3)(3) += 530000.0
-
-    Kglobal(1)(1) +=  533300.0
-    Kglobal(4)(1) += -444400.0
-    Kglobal(1)(4) += -444400.0
-    Kglobal(4)(4) +=  370370.37
-
-    Kglobal(0)(0) +=  533300.0
-    Kglobal(4)(0) += -177700.0
-    Kglobal(0)(4) += -177700.0
-    Kglobal(4)(4) +=  59259.260
-
     val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
-
 
     1
   }
