@@ -10,9 +10,6 @@ import matrix._
 
 object FEMethods {
 
-  //Kglobal = kBuilder(con, DOF, eArea, eLength, eModulus)
-
-
   def kBuilder( con : Array[Array[Integer]],
                 constraints : Array[Integer],
                 DOF : Integer,
@@ -37,10 +34,13 @@ object FEMethods {
 
     // add single point constraints
     println("stiffness matrix with single point constraints")
+    val kMax : Double  = K.max
+    println(s"maximum stiffness value:$kMax")
     for(i <- constraints.indices)
-      K(constraints(i))(constraints(i)) += 1000.0 * 53
+      K(constraints(i))(constraints(i)) += 1000.0 * kMax
     matrix.prettyPrintDim2(K)
 
+    // add multipoint constraints
 
 
     K
@@ -64,25 +64,27 @@ object FEMethods {
       anArray(i)(0) = col(1).toInt
       anArray(i)(1) = col(2).toInt
     }
-    println(s"Integer Array Named:$lineName")
+    println(s"loading array:$lineName")
     prettyPrintMatrixInt(anArray)
     anArray
   }
   def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
     var anArray = Array.ofDim[Double](nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
+    println(s" loading array: $lineName")
     for (i <- anArray.indices) {
       anArray(i) = fileNameBuffer(i + startsAt).toDouble
-      println(s"array: $lineName ($i): ${anArray(i)}")
+      println(s" | ${anArray(i)} |")
     }
     anArray
   }
-  def main(args: Array[String]): Unit = {
+
+  def solverOneDOF(inputFileName:String) : Integer = {
 
     val inputFile = new ListBuffer[String]
-    val bufferedSource = Source.fromFile("D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt")
-      for (line <- bufferedSource.getLines)
-        inputFile += line
+    val bufferedSource = Source.fromFile(inputFileName)
+    for (line <- bufferedSource.getLines)
+      inputFile += line
     bufferedSource.close
 
     var DOF_string = new String
@@ -138,5 +140,13 @@ object FEMethods {
 
     val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
 
+
+    1
+  }
+  def main(args: Array[String]): Unit = {
+
+    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt"
+
+    solverOneDOF(inputFileName)
   }
 }
