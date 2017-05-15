@@ -124,7 +124,7 @@ object FEMethods {
     anArray
   }
 
-  def solverOneDOF(inputFileName:String) : Integer = {
+  def solverOneDOF(inputFileName:String) : Array[Double] = {
 
     val inputFile = new ListBuffer[String]
     val bufferedSource = Source.fromFile(inputFileName)
@@ -172,12 +172,20 @@ object FEMethods {
 
     val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
 
-    1
+    Q
   }
   def main(args: Array[String]): Unit = {
 
     var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt"
 
-    solverOneDOF(inputFileName)
+    val Q : Array[Double] = solverOneDOF(inputFileName)
+
+    println("displacement array - Q")
+    matrix.printVector(Q)
+
+    // need function to calculate stresses
+
+
+
   }
 }
