@@ -10,6 +10,95 @@ import matrix._
 
 object FEMethods {
 
+
+
+  def kBuild( con : Array[Array[Integer]],
+                DOF : Integer,
+                eArea : Array[Double],
+                eLength : Array[Double],
+                eModulus : Array[Double]
+              ) : Array[Array[Double]] = {
+    var K = Array.ofDim[Double](DOF, DOF)
+    var sign = 1
+
+    // build stiffness matrix with no constraints
+    //     note: this code includes the matrix [1,-1,-1,1] implicitly in the if statement
+    for (i <- con.indices) {
+      for (j <- 0 to 1) {
+        for (k <- 0 to 1) {
+          if (j == k) sign = 1 else sign = -1
+          K(con(i)(j))(con(i)(k)) = sign * 1.0 * eModulus(i) * eArea(i) / eLength(i)
+        }
+      }
+    }
+   // println("initialized stiffness matrix\n")
+   // matrix.prettyPrintDim2(K)
+    K
+  }
+
+  def addSinglePointConstraints(
+                                 kMatrix : Array[Array[Double]],
+                                  constraints : Array[Integer]): Array[Array[Double]] = {
+    val C : Double  = matrix.max(kMatrix) * 10000.0
+    println(s"maximum stiffness value:$C for single point constraints")
+    println("stiffness matrix with single point constraints \n")
+    for(i <- constraints.indices)
+      kMatrix(constraints(i))(constraints(i)) += C
+    //matrix.prettyPrintDim2(kMatrix)
+    kMatrix
+  }
+
+  def addMultiPointConstraints(  K2 : Array[Array[Double]]): Array[Array[Double]] = {
+    // add multipoint constraints
+    val C : Double  = matrix.max(K2) * 10000.0
+    // array one
+
+    val B = Array.ofDim[Double](3)
+    B(0) = 0.0
+    B(1) = 1.0
+    B(2) = -0.333
+
+    var kmOne = Array.ofDim[Double](2,2)
+    kmOne(0)(0) = C*B(1)*B(1)
+    kmOne(0)(1) = C*B(1)*B(2)
+    kmOne(1)(0) = C*B(1)*B(2)
+    kmOne(1)(1) = C*B(2)*B(2)
+
+    println("constraint array one \n")
+    matrix.prettyPrintDim2(kmOne)
+
+    // insert at 1,5   note: indexs are minus -1 here
+    K2(0)(0) += kmOne(0)(0)
+    K2(0)(4) += kmOne(0)(1)
+    K2(4)(0) += kmOne(1)(0)
+    K2(4)(4) += kmOne(1)(1)
+
+
+    // array two
+    B(0) = 0.0
+    B(1) = 1.0
+    B(2) = -0.833
+
+    var kmTwo = Array.ofDim[Double](2,2)
+    kmTwo(0)(0) = C*B(1)*B(1)
+    kmTwo(0)(1) = C*B(1)*B(2)
+    kmTwo(1)(0) = C*B(1)*B(2)
+    kmTwo(1)(1) = C*B(2)*B(2)
+
+    println("constraint array Two \n")
+    matrix.prettyPrintDim2(kmTwo)
+
+    // insert at 2,5  note: indexes are -1 here
+    K2(1)(1) += kmTwo(0)(0)
+    K2(1)(4) += kmTwo(0)(1)
+    K2(4)(1) += kmTwo(1)(0)
+    K2(4)(4) += kmTwo(1)(1)
+
+    println("modified stiffness matrix\n")
+    matrix.prettyPrintDim2(K2)
+    K2
+  }
+  // build the global stiffness array including all constraints
   def kBuilder( con : Array[Array[Integer]],
                 constraints : Array[Integer],
                 DOF : Integer,
@@ -90,8 +179,6 @@ object FEMethods {
 
     K
   }
-
-
   def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Int = {
     var lineNum = -1
     for(i <- fileNameBuffer.indices) {
@@ -99,8 +186,6 @@ object FEMethods {
     }
     lineNum
   }
-
-
   def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
     var anArray =  Array.ofDim[Integer](nElements,nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
@@ -126,53 +211,87 @@ object FEMethods {
 
   def solverOneDOF(inputFileName:String) : Array[Double] = {
 
+    // read the input file into memory
     val inputFile = new ListBuffer[String]
     val bufferedSource = Source.fromFile(inputFileName)
     for (line <- bufferedSource.getLines)
       inputFile += line
     bufferedSource.close
 
+    // read the Degree-of-Freedom DOF value for the model
     var DOF_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("freedom")) DOF_string = inputFile(i+1)
     }
     val DOF : Integer = DOF_string.toInt
 
+    // read in the  number of elements in the model
     var elementCount_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("elements")) elementCount_string = inputFile(i+1)
     }
     val elementCount : Integer = elementCount_string.toInt
 
+    // read in the number of nodes with single point constraints
     var constraints = Array.ofDim[Integer](elementCount)
-
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
-
+    // Setup the element connection table array
     var connectionTable = Array.ofDim[Integer](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
+    // Setup the element cross-sectional area array
     var eArea = Array.ofDim[Double](elementCount)
     eArea = loadVector("area", elementCount, inputFile)
 
+    // Setup the element length array
     var eLength = Array.ofDim[Double](elementCount)
     eLength = loadVector("length", elementCount, inputFile)
 
+    // Setup the element modulus of elasticity array
     var eModulus = Array.ofDim[Double](elementCount)
     eModulus = loadVector("modulus", elementCount, inputFile)
 
+    // Setup the element body force array
     var p = Array.ofDim[Double](DOF)
     p = loadVector("force", DOF, inputFile)
 
-    var Kglobal = Array.ofDim[Double](DOF,DOF)
+    // Setup and build the global stiffness array
+    //    this function builds the matrix in one call
+   // var Kglobal = Array.ofDim[Double](DOF,DOF)
+   // Kglobal = kBuilder(connectionTable, constraints, DOF, eArea, eLength, eModulus)
 
-    Kglobal = kBuilder(connectionTable, constraints, DOF, eArea, eLength, eModulus)
 
-    val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
+    // Solve the displacement vector
+   // println("solution using one step builder")
+   // val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
 
-    Q
+    println("---------------------------------------------------")
+    println("solution using multi-step builder")
+
+    // Build the initial stiffness stiffness matrix
+    var Kg = Array.ofDim[Double](DOF,DOF)
+    Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
+    println("initialized stiffness array")
+    matrix.prettyPrintDim2(Kg)
+
+    // Add the single point constraint values to the stiffness matrix
+    val Kg2 = addSinglePointConstraints(Kg, constraints)
+    println("with single point constraints")
+    matrix.prettyPrintDim2(Kg2)
+
+    // Add the multipoint constraint values to the stiffness matrix
+    val Kg3 = addMultiPointConstraints(Kg)
+    println("with multi-point constraints")
+    matrix.prettyPrintDim2(Kg3)
+
+    val Q2 = matrix.gaussSeidel(Kg3, p, 0.000000000001)
+
+    println("-------------------------------------------------------")
+    // Return the displacement vector
+    Q2
   }
   def main(args: Array[String]): Unit = {
 

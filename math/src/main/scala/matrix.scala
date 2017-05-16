@@ -265,9 +265,6 @@ object  matrix {
     println(z)
   }
 
-
-
-
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
     var z = new StringBuffer()
     for {
