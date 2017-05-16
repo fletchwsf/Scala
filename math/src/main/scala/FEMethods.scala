@@ -10,38 +10,44 @@ import matrix._
 
 object FEMethods {
 
-  def kBuilder( con : Array[Array[Integer]],
-                constraints : Array[Integer],
+  def kBuild( con : Array[Array[Integer]],
                 DOF : Integer,
                 eArea : Array[Double],
                 eLength : Array[Double],
                 eModulus : Array[Double]
               ) : Array[Array[Double]] = {
-    var  K = Array.ofDim[Double](DOF,DOF)
+    var K = Array.ofDim[Double](DOF, DOF)
     var sign = 1
 
     // build stiffness matrix with no constraints
-    for(i <- con.indices) {
-      for (j <- 0 to 1 ){
-        for ( k <- 0 to 1 ) {
+    //     note: this code includes the matrix [1,-1,-1,1] implicitly in the if statement
+    for (i <- con.indices) {
+      for (j <- 0 to 1) {
+        for (k <- 0 to 1) {
           if (j == k) sign = 1 else sign = -1
           K(con(i)(j))(con(i)(k)) = sign * 1.0 * eModulus(i) * eArea(i) / eLength(i)
         }
       }
     }
-    println("original stiffness matrix\n")
-    matrix.prettyPrintDim2(K)
+    K
+  }
 
-    // add single point constraints
-    val C : Double  = matrix.max(K) * 10000.0
-    println(s"maximum stiffness value:$C for single point constraints")
-    println("stiffness matrix with single point constraints \n")
+  def addSinglePointConstraints(
+                                 kMatrix : Array[Array[Double]],
+                                  constraints : Array[Integer],
+                                  C: Double): Array[Array[Double]] = {
+
     for(i <- constraints.indices)
-      K(constraints(i))(constraints(i)) += C
-    matrix.prettyPrintDim2(K)
+      kMatrix(constraints(i))(constraints(i)) += C
+    kMatrix
+  }
 
-    // add multipoint constraints
-    // array one
+  def addMultiPointConstraints(  K2 : Array[Array[Double]],
+                                 C: Double,
+                                 nodesArray: Array[Array[Integer]],
+                                 qRatios: Array[Double]
+                              ): Array[Array[Double]] = {
+
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
     B(1) = 1.0
@@ -55,6 +61,13 @@ object FEMethods {
 
     println("constraint array one \n")
     matrix.prettyPrintDim2(kmOne)
+
+    // insert at 1,5   note: indexs are minus -1 here
+    K2(0)(0) += kmOne(0)(0)
+    K2(0)(4) += kmOne(0)(1)
+    K2(4)(0) += kmOne(1)(0)
+    K2(4)(4) += kmOne(1)(1)
+
 
     // array two
     B(0) = 0.0
@@ -70,9 +83,16 @@ object FEMethods {
     println("constraint array Two \n")
     matrix.prettyPrintDim2(kmTwo)
 
-    K
-  }
+    // insert at 2,5  note: indexes are -1 here
+    K2(1)(1) += kmTwo(0)(0)
+    K2(1)(4) += kmTwo(0)(1)
+    K2(4)(1) += kmTwo(1)(0)
+    K2(4)(4) += kmTwo(1)(1)
 
+   // println("modified stiffness matrix\n")
+   // matrix.prettyPrintDim2(K2)
+    K2
+  }
 
   def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Int = {
     var lineNum = -1
@@ -81,15 +101,13 @@ object FEMethods {
     }
     lineNum
   }
-
-
   def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
     var anArray =  Array.ofDim[Integer](nElements,nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
-      anArray(i)(0) = col(1).toInt
-      anArray(i)(1) = col(2).toInt
+      anArray(i)(0) = col(1).toInt - 1
+      anArray(i)(1) = col(2).toInt - 1
     }
     println(s"loading array:$lineName")
     prettyPrintMatrixInt(anArray)
@@ -106,74 +124,121 @@ object FEMethods {
     anArray
   }
 
-  def solverOneDOF(inputFileName:String) : Integer = {
+  def solverOneDOF(inputFileName:String) : Array[Double] = {
 
+    // read the input file into memory
     val inputFile = new ListBuffer[String]
     val bufferedSource = Source.fromFile(inputFileName)
     for (line <- bufferedSource.getLines)
       inputFile += line
     bufferedSource.close
 
+    // read the Degree-of-Freedom DOF value for the model
     var DOF_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("freedom")) DOF_string = inputFile(i+1)
     }
     val DOF : Integer = DOF_string.toInt
 
+    // read in the  number of elements in the model
     var elementCount_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("elements")) elementCount_string = inputFile(i+1)
     }
     val elementCount : Integer = elementCount_string.toInt
 
+    // read in the nodes with single point constraints
     var constraints = Array.ofDim[Integer](elementCount)
-
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
+    // Setup the element connection table array
     var connectionTable = Array.ofDim[Integer](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
+    // Setup the element cross-sectional area array
     var eArea = Array.ofDim[Double](elementCount)
     eArea = loadVector("area", elementCount, inputFile)
 
+    // Setup the element length array
     var eLength = Array.ofDim[Double](elementCount)
     eLength = loadVector("length", elementCount, inputFile)
 
+    // Setup the element modulus of elasticity array
     var eModulus = Array.ofDim[Double](elementCount)
     eModulus = loadVector("modulus", elementCount, inputFile)
 
+    // Setup the element body force array
     var p = Array.ofDim[Double](DOF)
     p = loadVector("force", DOF, inputFile)
 
-    var Kglobal = Array.ofDim[Double](DOF,DOF)
+    // Setup the multi-point constraint array
+    //    number of points - NMP
+    // read in the  number of elements in the model
+    var nMultiPointsCount_string = new String
+    for (i <- inputFile.indices){
+      if (inputFile(i).contains("NMP")) nMultiPointsCount_string = inputFile(i+1)
+    }
+    val NMP : Integer = nMultiPointsCount_string.toInt
+    println(s"number of multipoint nodes:$NMP")
+    //  read in the multi-point constraints
+    var mpNodes = Array.ofDim[Integer](NMP,2)
+    var mpQRatio = Array.ofDim[Double](NMP)
+    val startsAt = findLineFor("multipoint", inputFile)
+    for ( i <- mpNodes.indices) {
+      val col = inputFile(i + startsAt).split(",").map(_.trim)
+      mpNodes(i)(0) = col(0).toInt - 1
+      mpNodes(i)(1) = col(1).toInt - 1
+      mpQRatio(i) = col(2).toDouble
+    }
+    println("Multipoint displacement vector")
+    printVector(mpQRatio)
+    println("Multipoint element numbers")
+    prettyPrintMatrixInt(mpNodes)
 
-    Kglobal = kBuilder(connectionTable, constraints, DOF, eArea, eLength, eModulus)
 
+    println("---------------------------------------------------")
 
-    Kglobal(2)(2) += 530000.0
-    Kglobal(3)(3) += 530000.0
+    // Build the initial stiffness stiffness matrix
+    var Kg = Array.ofDim[Double](DOF,DOF)
+    Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
+    println("initialized stiffness array")
+    matrix.prettyPrintDim2(Kg)
 
-    Kglobal(1)(1) +=  533300.0
-    Kglobal(4)(1) += -444400.0
-    Kglobal(1)(4) += -444400.0
-    Kglobal(4)(4) +=  370370.37
+    // Establish the penalty stiffness based on the maximum stiffness in the matrix
+    val C : Double  = matrix.max(Kg) * 10000.0
+    println(s"maximum stiffness value:$C for single point constraints")
+    println("stiffness matrix with single point constraints \n")
 
-    Kglobal(0)(0) +=  533300.0
-    Kglobal(4)(0) += -177700.0
-    Kglobal(0)(4) += -177700.0
-    Kglobal(4)(4) +=  59259.260
+    // Add the single point constraint values to the stiffness matrix
+    val Kg2 = addSinglePointConstraints(Kg, constraints, C)
+    println("with single point constraints")
+    matrix.prettyPrintDim2(Kg2)
 
-    val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
+    // Add the multipoint constraint values to the stiffness matrix
+    val Kg3 = addMultiPointConstraints(Kg, C, mpNodes, mpQRatio)
+    println("with multi-point constraints")
+    matrix.prettyPrintDim2(Kg3)
 
+    val Q2 = matrix.gaussSeidel(Kg3, p, 0.000000000001)
 
-    1
+    println("-------------------------------------------------------")
+    // Return the displacement vector
+    Q2
   }
   def main(args: Array[String]): Unit = {
 
     var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt"
 
-    solverOneDOF(inputFileName)
+    val Q : Array[Double] = solverOneDOF(inputFileName)
+
+    println("displacement array - Q")
+    matrix.printVector(Q)
+
+    // need function to calculate stresses
+
+
+
   }
 }
