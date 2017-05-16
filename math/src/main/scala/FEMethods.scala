@@ -43,7 +43,10 @@ object FEMethods {
   }
 
   def addMultiPointConstraints(  K2 : Array[Array[Double]],
-                                  C: Double): Array[Array[Double]] = {
+                                 C: Double,
+                                 nodesArray: Array[Array[Integer]],
+                                 qRatios: Array[Double]
+                              ): Array[Array[Double]] = {
 
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
@@ -144,7 +147,7 @@ object FEMethods {
     }
     val elementCount : Integer = elementCount_string.toInt
 
-    // read in the number of nodes with single point constraints
+    // read in the nodes with single point constraints
     var constraints = Array.ofDim[Integer](elementCount)
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
@@ -170,6 +173,31 @@ object FEMethods {
     var p = Array.ofDim[Double](DOF)
     p = loadVector("force", DOF, inputFile)
 
+    // Setup the multi-point constraint array
+    //    number of points - NMP
+    // read in the  number of elements in the model
+    var nMultiPointsCount_string = new String
+    for (i <- inputFile.indices){
+      if (inputFile(i).contains("NMP")) nMultiPointsCount_string = inputFile(i+1)
+    }
+    val NMP : Integer = nMultiPointsCount_string.toInt
+    println(s"number of multipoint nodes:$NMP")
+    //  read in the multi-point constraints
+    var mpNodes = Array.ofDim[Integer](NMP,2)
+    var mpQRatio = Array.ofDim[Double](NMP)
+    val startsAt = findLineFor("multipoint", inputFile)
+    for ( i <- mpNodes.indices) {
+      val col = inputFile(i + startsAt).split(",").map(_.trim)
+      mpNodes(i)(0) = col(0).toInt - 1
+      mpNodes(i)(1) = col(1).toInt - 1
+      mpQRatio(i) = col(2).toDouble
+    }
+    println("Multipoint displacement vector")
+    printVector(mpQRatio)
+    println("Multipoint element numbers")
+    prettyPrintMatrixInt(mpNodes)
+
+
     println("---------------------------------------------------")
 
     // Build the initial stiffness stiffness matrix
@@ -189,7 +217,7 @@ object FEMethods {
     matrix.prettyPrintDim2(Kg2)
 
     // Add the multipoint constraint values to the stiffness matrix
-    val Kg3 = addMultiPointConstraints(Kg, C)
+    val Kg3 = addMultiPointConstraints(Kg, C, mpNodes, mpQRatio)
     println("with multi-point constraints")
     matrix.prettyPrintDim2(Kg3)
 

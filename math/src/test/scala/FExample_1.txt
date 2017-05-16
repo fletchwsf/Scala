@@ -8,6 +8,8 @@ Example X
 # number of elements - NE
 2
 
+
+
 # element modulus of elasticity - one row per NE
 200.0
 70.0
@@ -34,6 +36,9 @@ Example X
 # single point constraint array (nodes with zero displacement)
 3
 4
+
+# number of NMP
+2
 
 # multipoint array
 1,5,-0.333
