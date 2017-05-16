@@ -10,8 +10,6 @@ import matrix._
 
 object FEMethods {
 
-
-
   def kBuild( con : Array[Array[Integer]],
                 DOF : Integer,
                 eArea : Array[Double],
@@ -31,27 +29,21 @@ object FEMethods {
         }
       }
     }
-   // println("initialized stiffness matrix\n")
-   // matrix.prettyPrintDim2(K)
     K
   }
 
   def addSinglePointConstraints(
                                  kMatrix : Array[Array[Double]],
-                                  constraints : Array[Integer]): Array[Array[Double]] = {
-    val C : Double  = matrix.max(kMatrix) * 10000.0
-    println(s"maximum stiffness value:$C for single point constraints")
-    println("stiffness matrix with single point constraints \n")
+                                  constraints : Array[Integer],
+                                  C: Double): Array[Array[Double]] = {
+
     for(i <- constraints.indices)
       kMatrix(constraints(i))(constraints(i)) += C
-    //matrix.prettyPrintDim2(kMatrix)
     kMatrix
   }
 
-  def addMultiPointConstraints(  K2 : Array[Array[Double]]): Array[Array[Double]] = {
-    // add multipoint constraints
-    val C : Double  = matrix.max(K2) * 10000.0
-    // array one
+  def addMultiPointConstraints(  K2 : Array[Array[Double]],
+                                  C: Double): Array[Array[Double]] = {
 
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
@@ -94,8 +86,8 @@ object FEMethods {
     K2(4)(1) += kmTwo(1)(0)
     K2(4)(4) += kmTwo(1)(1)
 
-    println("modified stiffness matrix\n")
-    matrix.prettyPrintDim2(K2)
+   // println("modified stiffness matrix\n")
+   // matrix.prettyPrintDim2(K2)
     K2
   }
   // build the global stiffness array including all constraints
@@ -265,8 +257,8 @@ object FEMethods {
 
 
     // Solve the displacement vector
-   // println("solution using one step builder")
-   // val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
+    //println("solution using one step builder")
+    //val Q = matrix.gaussSeidel(Kglobal, p, 0.000000000001)
 
     println("---------------------------------------------------")
     println("solution using multi-step builder")
@@ -277,13 +269,17 @@ object FEMethods {
     println("initialized stiffness array")
     matrix.prettyPrintDim2(Kg)
 
+    // Establish the penalty stiffness based on the maximum stiffness in the matrix
+    val C : Double  = matrix.max(Kg) * 10000.0
+    println(s"maximum stiffness value:$C for single point constraints")
+    println("stiffness matrix with single point constraints \n")
     // Add the single point constraint values to the stiffness matrix
-    val Kg2 = addSinglePointConstraints(Kg, constraints)
+    val Kg2 = addSinglePointConstraints(Kg, constraints, C)
     println("with single point constraints")
     matrix.prettyPrintDim2(Kg2)
 
     // Add the multipoint constraint values to the stiffness matrix
-    val Kg3 = addMultiPointConstraints(Kg)
+    val Kg3 = addMultiPointConstraints(Kg, C)
     println("with multi-point constraints")
     matrix.prettyPrintDim2(Kg3)
 
