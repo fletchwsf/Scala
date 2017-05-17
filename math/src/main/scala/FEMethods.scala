@@ -48,6 +48,8 @@ object FEMethods {
                                  qRatios: Array[Double]
                               ): Array[Array[Double]] = {
 
+    // calculate B array based on received parameter values
+
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
     B(1) = 1.0
