@@ -8,8 +8,6 @@ Example X
 # number of elements - NE
 2
 
-
-
 # element modulus of elasticity - one row per NE
 200.0
 70.0

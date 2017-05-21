@@ -49,47 +49,65 @@ object FEMethods {
                               ): Array[Array[Double]] = {
 
     // calculate B array based on received parameter values
+    // qRatio[0] = -0.333
+    // qRation[1] = -0.833
 
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
-    B(1) = 1.0
-    B(2) = -0.333
+//    B(1) = 1.0
+//    B(2) = -0.333
 
     var kmOne = Array.ofDim[Double](2,2)
-    kmOne(0)(0) = C*B(1)*B(1)
-    kmOne(0)(1) = C*B(1)*B(2)
-    kmOne(1)(0) = C*B(1)*B(2)
-    kmOne(1)(1) = C*B(2)*B(2)
+//    kmOne(0)(0) = C*B(1)*B(1)
+//    kmOne(0)(1) = C*B(1)*B(2)
+//    kmOne(1)(0) = C*B(2)*B(1)
+//    kmOne(1)(1) = C*B(2)*B(2)
+//
+//    println("constraint array one \n")
+//    matrix.prettyPrintDim2(kmOne)
 
-    println("constraint array one \n")
-    matrix.prettyPrintDim2(kmOne)
+//    // insert at 1,5   note: indexs are minus -1 here
+//    K2(0)(0) += kmOne(0)(0)
+//    K2(0)(4) += kmOne(0)(1)
+//    K2(4)(0) += kmOne(1)(0)
+//    K2(4)(4) += kmOne(1)(1)
 
-    // insert at 1,5   note: indexs are minus -1 here
-    K2(0)(0) += kmOne(0)(0)
-    K2(0)(4) += kmOne(0)(1)
-    K2(4)(0) += kmOne(1)(0)
-    K2(4)(4) += kmOne(1)(1)
+    //var CB = Array.ofDim[Double](qRatios.length)
 
+    for (i <- nodesArray.indices) {
+      B(1) = 1.0
+      B(2) = qRatios(i)
+      kmOne(0)(0) = C*B(1)*B(1)
+      kmOne(0)(1) = C*B(1)*B(2)
+      kmOne(1)(0) = C*B(2)*B(1)
+      kmOne(1)(1) = C*B(2)*B(2)
 
+      for (j <- nodesArray.indices)
+        for (k <- nodesArray.indices) {
+          //K2(nodesArray(i)(j))(nodesArray(i)(k)) += kmOne(i)(j)
+          println(s"K2 numbering: ${(nodesArray(i)(j))}${(nodesArray(i)(k))} += ${kmOne(j)(k)}")
+          K2(nodesArray(i)(j))(nodesArray(i)(k)) += kmOne(j)(k)
+        }
+    }
     // array two
-    B(0) = 0.0
-    B(1) = 1.0
-    B(2) = -0.833
-
-    var kmTwo = Array.ofDim[Double](2,2)
-    kmTwo(0)(0) = C*B(1)*B(1)
-    kmTwo(0)(1) = C*B(1)*B(2)
-    kmTwo(1)(0) = C*B(1)*B(2)
-    kmTwo(1)(1) = C*B(2)*B(2)
-
-    println("constraint array Two \n")
-    matrix.prettyPrintDim2(kmTwo)
-
-    // insert at 2,5  note: indexes are -1 here
-    K2(1)(1) += kmTwo(0)(0)
-    K2(1)(4) += kmTwo(0)(1)
-    K2(4)(1) += kmTwo(1)(0)
-    K2(4)(4) += kmTwo(1)(1)
+//    B(0) = 0.0
+//    B(1) = 1.0
+//    B(2) = -0.833
+//
+//    var kmTwo = Array.ofDim[Double](2,2)
+//    kmTwo(0)(0) = C*B(1)*B(1)
+//    kmTwo(0)(1) = C*B(1)*B(2)
+//    kmTwo(1)(0) = C*B(1)*B(2)
+//    kmTwo(1)(1) = C*B(2)*B(2)
+//
+//    println("constraint array Two \n")
+//    matrix.prettyPrintDim2(kmTwo)
+//
+//    // insert at 2,5  note: indexes are -1 here
+//    K2(1)(1) += kmTwo(0)(0)
+//    K2(1)(4) += kmTwo(0)(1)
+//    K2(4)(1) += kmTwo(1)(0)
+//    K2(4)(4) += kmTwo(1)(1)
 
    // println("modified stiffness matrix\n")
    // matrix.prettyPrintDim2(K2)
@@ -112,7 +130,7 @@ object FEMethods {
       anArray(i)(1) = col(2).toInt - 1
     }
     println(s"loading array:$lineName")
-    prettyPrintMatrixInt(anArray)
+    matrix.printArray(anArray)
     anArray
   }
   def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
@@ -197,7 +215,7 @@ object FEMethods {
     println("Multipoint displacement vector")
     printVector(mpQRatio)
     println("Multipoint element numbers")
-    prettyPrintMatrixInt(mpNodes)
+    matrix.printArray(mpNodes)
 
 
     println("---------------------------------------------------")
@@ -206,7 +224,7 @@ object FEMethods {
     var Kg = Array.ofDim[Double](DOF,DOF)
     Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
     println("initialized stiffness array")
-    matrix.prettyPrintDim2(Kg)
+    matrix.printArray(Kg)
 
     // Establish the penalty stiffness based on the maximum stiffness in the matrix
     val C : Double  = matrix.max(Kg) * 10000.0
@@ -214,16 +232,20 @@ object FEMethods {
     println("stiffness matrix with single point constraints \n")
 
     // Add the single point constraint values to the stiffness matrix
-    val Kg2 = addSinglePointConstraints(Kg, constraints, C)
+    Kg = addSinglePointConstraints(Kg, constraints, C)
     println("with single point constraints")
-    matrix.prettyPrintDim2(Kg2)
+    matrix.printArray(Kg)
 
-    // Add the multipoint constraint values to the stiffness matrix
-    val Kg3 = addMultiPointConstraints(Kg, C, mpNodes, mpQRatio)
-    println("with multi-point constraints")
-    matrix.prettyPrintDim2(Kg3)
+    // check for multipoint constraints and
+    //    add the multipoint constraint values to the stiffness matrix
+    if ( NMP > 0 ) {
+      Kg = addMultiPointConstraints(Kg, C, mpNodes, mpQRatio)
+      println("with multi-point constraints")
+      matrix.printArray(Kg)
+    } else Kg
 
-    val Q2 = matrix.gaussSeidel(Kg3, p, 0.000000000001)
+    // solve for the displacement vector
+    val Q2 = matrix.gaussSeidel(Kg, p, 0.000000000001)
 
     println("-------------------------------------------------------")
     // Return the displacement vector
@@ -233,12 +255,26 @@ object FEMethods {
 
     var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt"
 
-    val Q : Array[Double] = solverOneDOF(inputFileName)
+    var Q : Array[Double] = solverOneDOF(inputFileName)
 
+    println("FExample_1.txt")
     println("displacement array - Q")
     matrix.printVector(Q)
-
+    println("expected results")
+    println(" | 0.48247         | 1.20697         | 0.00005         | 0.00005         | 1.44900")
     // need function to calculate stresses
+
+    val inputFileName2 = "D:\\Scala\\math\\src\\test\\scala\\FExample_2.txt"
+
+
+    var Q2 : Array[Double] = solverOneDOF(inputFileName2)
+
+
+    println("FExample_2.txt")
+    println("displacement array - Q")
+    matrix.printVector(Q2)
+    println("expected results")
+    println("00")
 
 
 

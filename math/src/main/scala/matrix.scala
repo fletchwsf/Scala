@@ -230,14 +230,6 @@ object  matrix {
     println(s)
   }
 
-  def prettyPrintDim2(a: Array[Array[Double]]) : Unit = {
-    var s = new StringBuffer()
-    for ( i <-  a.indices) {
-      for ( j <- a.indices) s.append(f" | ${a(i)(j)}%-15.5f" )
-    s.append("\n")
-    }
-    println(s)
-  }
 
   def prettyPrintXY(x : Array[Array[Double]], y : Array[Double]) : Unit = {
     var z = new StringBuffer()
@@ -248,19 +240,6 @@ object  matrix {
         k <- x.indices
       } z.append(s" x($j)($k) ${x(j)(k)}")
       z.append(s" | y($j) ${y(j)} | \n")
-    }
-    println(z)
-  }
-
-  def prettyPrintMatrixInt(x : Array[Array[Integer]]) : Unit = {
-    var z = new StringBuffer()
-    for {
-      j <- x.indices
-    } {
-      for {
-        k <- x.indices
-      } z.append(f"| ${x(j)(k)}%-5d ")
-      z.append(s" |\n")
     }
     println(z)
   }
@@ -276,6 +255,21 @@ object  matrix {
       z.append(f" = ${b(j)}%8.4f  \n")
     }
     println(z)
+  }
+
+  // print out a 2-dimensional array with formatting
+  def printArray[A](inArray :Array[Array[A]]): Unit = {
+    var outBuffer = new StringBuffer()
+    for(i <- inArray) yield {
+      for(j <- i) yield {
+        j match {
+          case j:Int => outBuffer.append(f" $j%- 5d ")
+          case j:Double => outBuffer.append(f" $j%- 10.4f ")
+        }
+      }
+      outBuffer.append("\n")
+    }
+    println(outBuffer)
   }
 
   def main(args: Array[String]): Unit = {
