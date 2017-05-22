@@ -1,12 +1,11 @@
+package FiniteElementAnalysis
+
 /**
   * Created by wsf on 4/15/2017.
   */
 
-import scala.collection.mutable.ArrayBuffer
-
-import util.control.Breaks._
-
-import math._
+import scala.math._
+import scala.util.control.Breaks._
 
 object  matrix {
 
@@ -75,7 +74,7 @@ object  matrix {
     prettyPrintAxB(a,d)
     var x = Array.ofDim[Double](a.length)
     val n = a.length -1
-    for ( i <- 0 to n-1 ){
+    for ( i <- 0 until n ){
       for (k <- i + 1 to n){
         var m = a(k)(i) / a(i)(i)
         a(k)(i) = 0
@@ -102,7 +101,6 @@ object  matrix {
     println("----------------------------------------")
     println("Conjugate Gradient Solver")
     println("----------------------------------------")
-    prettyPrintXY(a,b)
 
     var convergence = false
     // temporary values
@@ -209,60 +207,11 @@ object  matrix {
           println("iterations completed:" + ctr)
           break
         }
-
-
       }
     }
-
-
     println("solution b = ")
     printVector(x)
     x
-  }
-
-  def printVector(a : Array[Double]): Unit = {
-    var s = new StringBuffer()
-    for {
-         i <- a.indices                                   // return the start and end indices of the vector
-       } s.append(f" | ${a(i)}%-15.5f")
-      //println(s"($i) = ${a(i)}")
-    s.append("\n")
-    println(s)
-  }
-
-  def prettyPrintDim2(a: Array[Array[Double]]) : Unit = {
-    var s = new StringBuffer()
-    for ( i <-  a.indices) {
-      for ( j <- a.indices) s.append(f" | ${a(i)(j)}%-15.5f" )
-    s.append("\n")
-    }
-    println(s)
-  }
-
-  def prettyPrintXY(x : Array[Array[Double]], y : Array[Double]) : Unit = {
-    var z = new StringBuffer()
-    for {
-      j <- y.indices
-    } {
-      for {
-        k <- x.indices
-      } z.append(s" x($j)($k) ${x(j)(k)}")
-      z.append(s" | y($j) ${y(j)} | \n")
-    }
-    println(z)
-  }
-
-  def prettyPrintMatrixInt(x : Array[Array[Integer]]) : Unit = {
-    var z = new StringBuffer()
-    for {
-      j <- x.indices
-    } {
-      for {
-        k <- x.indices
-      } z.append(f"| ${x(j)(k)}%-5d ")
-      z.append(s" |\n")
-    }
-    println(z)
   }
 
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
@@ -276,6 +225,36 @@ object  matrix {
       z.append(f" = ${b(j)}%8.4f  \n")
     }
     println(z)
+  }
+
+  // print out a 2-dimensional array with formatting
+  def printArray[A](inArray :Array[Array[A]]): Unit = {
+    var outBuffer = new StringBuffer()
+    for(i <- inArray) yield {
+      for(j <- i) yield {
+        j match {
+          case j:Int => outBuffer.append(f"| ${j.toInt}%- 5d ")
+          case j:Double => outBuffer.append(f"|  ${j.toDouble}%- 15.5f  ")
+        }
+      }
+      outBuffer.append("|\n")
+    }
+    println(outBuffer)
+  }
+
+
+  // print out a 1-dimensional array with formatting
+  def printVector[A](inArray :Array[A]): Unit = {
+    var outBuffer = new StringBuffer()
+      for(j <- inArray ) yield {
+        j match {
+          case j:Int => outBuffer.append(f"|${j.toInt}%- 5d ")
+          case j:Double => outBuffer.append(f"|${j.toDouble}%- 15.5f  ")
+        }
+
+    }
+    outBuffer.append("|\n")
+    println(outBuffer)
   }
 
   def main(args: Array[String]): Unit = {
@@ -314,12 +293,6 @@ object  matrix {
     z2(2)(0) = -3.0
     z2(2)(1) = 1.0
     z2(2)(2) = 4.0
-
-//    val d3 = Array.ofDim[Double](3)
-//    d3(0) = 3.0
-//    d3(1) = 12.0
-//    d3(2) = 16.0
-//    gaussSeidel(z2,d3,0.000001)
 
     // Use Conjugate Gradient Solver
     //conjugateGradientSolver(z2,d3,0.00001)

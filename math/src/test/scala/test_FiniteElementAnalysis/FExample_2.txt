@@ -1,0 +1,51 @@
+# title
+# description
+
+// file naming convention per Chandurptla 2002
+//  NN   -  number of nodes
+//  NE   -  number of elements
+//  NM   -  number of materials
+//  NDIM -  number of coordinates per node: 2 for 2-D or 3 for 3-D
+//  NEN  -  number of nodes per element: 3 for 3-node triangular element, 4 for 4-node quadrilateral
+//  NDM  -  number of degrees of freedom per note: 2 for CST element, 6 for 3-D beam element
+//  ND   -  number of degrees of freedom along displacement axis = number of boundary conditions
+//  NL   -  number of applied component loads
+//  NMPC -  number of multipoint constraints
+//  NQ   -  total number of degrees of freedom = NN * NDM
+
+
+
+#NN     NE      NM      NDIM    NEN     NDN    --- 1 line of data six entries
+5,      2,      2,      2,      2,      1
+
+#ND     NL      NMPC                --- 1 line of data three entries
+2,      1,      2
+
+#Node#     Coordinates#1   #2    #3...Coordinates #NDIM   ---NM lines of data, (NDIM+1) entries
+1,          3,             1
+2,          4,             2
+
+#Element  Node#     Node#NEN     Mat#        Element Characteristics (*)  --- NE lines of data  (NEN+2+ #of Char.) entries
+// 2         2      4           STEEL     Area          Length,     Temperature rise
+1,           1,     2,          STEEL    12.0,          45.0,       0.0
+2,           2,     2,           AL,      9.0,          30.0,       0.0
+
+# DOF#   Specified Displacement    --- ND lines of data, two entries
+0,        0
+0,        0
+0,        0
+0,        0
+0,        0
+
+# DOF#  Load                        --- NL lines of data, two entries
+5,      30.0
+
+# Mat# Material Properties         --- NM lines of data, (1+ # of prop.) entries
+1       AL      modulus
+2       STEEL   modulus
+
+????
+# B1    i   B2  j   B3 (Multipoint constraint: B1*Qi+B2*Qj = B3) ---NMPC lines of data, 5 entries
+1           5       -0.333
+2           5       -0.833
+

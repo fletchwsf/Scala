@@ -1,9 +1,10 @@
+package test_FiniteElementAnalysis
+
 /**
   * Created by wsf on 4/15/2017.
   */
 
-import org.scalatest.Matchers._
-
+import FiniteElementAnalysis.matrix
 import org.scalatest._
 
 class test_matrix extends FunSuite {
