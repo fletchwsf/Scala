@@ -294,12 +294,6 @@ object  matrix {
     z2(2)(1) = 1.0
     z2(2)(2) = 4.0
 
-//    val d3 = Array.ofDim[Double](3)
-//    d3(0) = 3.0
-//    d3(1) = 12.0
-//    d3(2) = 16.0
-//    gaussSeidel(z2,d3,0.000001)
-
     // Use Conjugate Gradient Solver
     //conjugateGradientSolver(z2,d3,0.00001)
 

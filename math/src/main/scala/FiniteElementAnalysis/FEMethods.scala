@@ -90,28 +90,6 @@ object FEMethods {
           K2(nodesArray(i)(j))(nodesArray(i)(k)) += kmOne(j)(k)
         }
     }
-    // array two
-//    B(0) = 0.0
-//    B(1) = 1.0
-//    B(2) = -0.833
-//
-//    var kmTwo = Array.ofDim[Double](2,2)
-//    kmTwo(0)(0) = C*B(1)*B(1)
-//    kmTwo(0)(1) = C*B(1)*B(2)
-//    kmTwo(1)(0) = C*B(1)*B(2)
-//    kmTwo(1)(1) = C*B(2)*B(2)
-//
-//    println("constraint array Two \n")
-//    matrix.prettyPrintDim2(kmTwo)
-//
-//    // insert at 2,5  note: indexes are -1 here
-//    K2(1)(1) += kmTwo(0)(0)
-//    K2(1)(4) += kmTwo(0)(1)
-//    K2(4)(1) += kmTwo(1)(0)
-//    K2(4)(4) += kmTwo(1)(1)
-
-   // println("modified stiffness matrix\n")
-   // matrix.prettyPrintDim2(K2)
     K2
   }
 
@@ -264,17 +242,7 @@ object FEMethods {
     println(" | 0.48247         | 1.20697         | 0.00005         | 0.00005         | 1.44900")
     // need function to calculate stresses
 
-//    val inputFileName2 = "D:\\Scala\\math\\src\\test\\scala\\FExample_2.txt"
-//
-//
-//    var Q2 : Array[Double] = solverOneDOF(inputFileName2)
-//
-//
-//    println("FExample_2.txt")
-//    println("displacement array - Q")
-//    matrix.printVector(Q2)
-//    println("expected results")
-//    println("00")
+
 
 
 
