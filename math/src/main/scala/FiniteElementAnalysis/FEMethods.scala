@@ -1,11 +1,12 @@
+package FiniteElementAnalysis
+
 /**
   * Created by wsf on 5/7/2017.
   */
 
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ListBuffer
 import scala.io.Source
-import util.control.Breaks._
-import math._
+
 import matrix._
 
 object FEMethods {
@@ -85,7 +86,7 @@ object FEMethods {
       for (j <- nodesArray.indices)
         for (k <- nodesArray.indices) {
           //K2(nodesArray(i)(j))(nodesArray(i)(k)) += kmOne(i)(j)
-          println(s"K2 numbering: ${(nodesArray(i)(j))}${(nodesArray(i)(k))} += ${kmOne(j)(k)}")
+          println(s"K2 numbering: ${nodesArray(i)(j)}${nodesArray(i)(k)} += ${kmOne(j)(k)}")
           K2(nodesArray(i)(j))(nodesArray(i)(k)) += kmOne(j)(k)
         }
     }
@@ -253,8 +254,7 @@ object FEMethods {
   }
   def main(args: Array[String]): Unit = {
 
-    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\FExample_1.txt"
-
+    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_1.txt"
     var Q : Array[Double] = solverOneDOF(inputFileName)
 
     println("FExample_1.txt")
@@ -264,17 +264,17 @@ object FEMethods {
     println(" | 0.48247         | 1.20697         | 0.00005         | 0.00005         | 1.44900")
     // need function to calculate stresses
 
-    val inputFileName2 = "D:\\Scala\\math\\src\\test\\scala\\FExample_2.txt"
-
-
-    var Q2 : Array[Double] = solverOneDOF(inputFileName2)
-
-
-    println("FExample_2.txt")
-    println("displacement array - Q")
-    matrix.printVector(Q2)
-    println("expected results")
-    println("00")
+//    val inputFileName2 = "D:\\Scala\\math\\src\\test\\scala\\FExample_2.txt"
+//
+//
+//    var Q2 : Array[Double] = solverOneDOF(inputFileName2)
+//
+//
+//    println("FExample_2.txt")
+//    println("displacement array - Q")
+//    matrix.printVector(Q2)
+//    println("expected results")
+//    println("00")
 
 
 
