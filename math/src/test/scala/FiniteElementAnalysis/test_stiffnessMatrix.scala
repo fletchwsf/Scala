@@ -1,30 +1,14 @@
 package FiniteElementAnalysis
 
-import org.scalatest.{BeforeAndAfterEach, FunSuite}
-import FiniteElementAnalysis.stiffnessMatrix._
-
-import org.scalatest._
-import org.scalatest.Matchers._
-
-
-
-import scala.collection.mutable.ArrayBuffer
-
 /**
   * Created by wsf on 5/31/2017.
   */
+
+import org.scalatest._
+
+import org.scalatest.Matchers._
+
 class test_stiffnessMatrix extends FunSuite  {
-
-
-
-//  def kBuild( con : Array[Array[Int]],
-//              DOF : Int,
-  //            localDOF : Int {2,3}
-//              eArea : Array[Double],
-//              eLength : Array[Double],
-//              eModulus : Array[Double]
-
-
 
   test("testKBuild-1 Example 3.3  2 elements and 2 local DOF ") {
 
@@ -58,7 +42,6 @@ class test_stiffnessMatrix extends FunSuite  {
     expected(2)(0) = 0.0
     expected(2)(1) = -3.75
     expected(2)(2) = 3.75
-
 
     assert( result === expected, "should return an 2x2 array with all members 1.0 on the diagonals -1.0 elsewhere")
   }
@@ -107,11 +90,13 @@ class test_stiffnessMatrix extends FunSuite  {
     val totalDOF = nNodes * nDOFperNode
     val localDOF = 2
 
-    var con = Array.ofDim[Int](2,2)
-    con(0)(0) = 0
-    con(0)(1) = 1
-    con(1)(0) = 1
-    con(1)(1) = 2
+    var con = Array.ofDim[Int](2,3)
+    con(0)(0) = 1
+    con(0)(1) = 3
+    con(0)(2) = 2
+    con(1)(0) = 3
+    con(1)(1) = 5
+    con(1)(2) = 4
 
     val example = stiffnessMatrix.kBuild(con, totalDOF, localDOF, eArea, eLength, eModulus)
     var result = Array.ofDim[Double](4,4)
@@ -132,7 +117,7 @@ class test_stiffnessMatrix extends FunSuite  {
     result(3)(2) = -8.0
     result(3)(3) = 16.0
 
-    assert(example === result, "test with local DOF set to 3 fails")
+    assert(1 === 2, "test with local DOF set to 3 fails")
   }
 
   test("testKBuild-4 example 3.6 stiffness matrix"){
@@ -190,5 +175,4 @@ class test_stiffnessMatrix extends FunSuite  {
       for(j <- result.indices)
         assert(example(i)(j) === result(i)(j) +- 0.1, "example 3.6 failed")
   }
-
 }
