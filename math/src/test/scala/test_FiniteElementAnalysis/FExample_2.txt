@@ -2,26 +2,27 @@
 # description
 
 // file naming convention per Chandurptla 2002
-//  NN   -  number of nodes
-//  NE   -  number of elements
-//  NM   -  number of materials
-//  NDIM -  number of coordinates per node: 2 for 2-D or 3 for 3-D
-//  NEN  -  number of nodes per element: 3 for 3-node triangular element, 4 for 4-node quadrilateral
-//  NDM  -  number of degrees of freedom per note: 2 for CST element, 6 for 3-D beam element
-//  ND   -  number of degrees of freedom along displacement axis = number of boundary conditions
-//  NL   -  number of applied component loads
-//  NMPC -  number of multipoint constraints
-//  NQ   -  total number of degrees of freedom = NN * NDM
+
+//  NE   -  nElements - number of elements
+//  NN   -  nNodes - number of nodes
+//  NM   -  nMaterials - number of materials
+//  NDIM -  nCoordinatesPerNode - number of coordinates per node: 2 for 2-D or 3 for 3-D
+//  NEN  -  nNodesPerElement - number of nodes per element: 2 for 2-node 4-side element, 3 for 3-node triangular element, 4 for 4-node quadrilateral
+//  NDM  -  nDOFPerNode - number of degrees of freedom per node: 2 for CST element, 6 for 3-D beam element
+//  ND   -  nDOFOnAxis - number of degrees of freedom along displacement axis = number of boundary conditions
+//       -  nBoundaryConditions - number of boundary conditions
+//  NL   -  nLoads - number of applied component loads
+//  NMPC -  nMultipointConstraints - number of multipoint constraints
+
+//  NQ   -  nDOFTotal - total number of degrees of freedom = NN * NDM
 
 
+#nInput - The number parameters that define attributes of the problem and finite element arrays
+#NN     NE      NM      NDIM    NEN     NDM    ND     NL       NMPC    --- 1 line of data nine entries
+5,      2,      2,      2,      2,      1,      2,     1,       2
 
-#NN     NE      NM      NDIM    NEN     NDN    --- 1 line of data six entries
-5,      2,      2,      2,      2,      1
-
-#ND     NL      NMPC                --- 1 line of data three entries
-2,      1,      2
-
-#Node#     Coordinates#1   #2    #3...Coordinates #NDIM   ---NM lines of data, (NDIM+1) entries
+#ConnectionArray(NM,NDIM+1)
+#Node#     Coordinates#1   #2    #3...Coordinates #NDIM   ---NN lines of data, (NDIM+1) entries
 1,          3,             1
 2,          4,             2
 
