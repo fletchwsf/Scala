@@ -24,12 +24,12 @@ object stiffnessMatrix {
     // define the element strain displacement matrix - eSDM
     var eSDM = Array.ofDim[Int](localDOF,localDOF)
     localDOF match {
-      case 2 =>
+      case 2 =>              // eSDM for an element with linear shape function
         eSDM (0) (0) = 1
         eSDM (0) (1) = - 1
         eSDM (1) (0) = - 1
         eSDM (1) (1) = 1
-      case 3 =>
+      case 3 =>             // eSDM for an element with a quadratic shape function
         eSDM (0) (0) = 7
         eSDM (0) (1) = 1
         eSDM (0) (2) = - 8
@@ -51,6 +51,5 @@ object stiffnessMatrix {
     }
     K
   }
-
 
 }
