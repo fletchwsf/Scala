@@ -49,31 +49,10 @@ object FEMethods {
                                  qRatios: Array[Double]
                               ): Array[Array[Double]] = {
 
-    // calculate B array based on received parameter values
-    // qRatio[0] = -0.333
-    // qRation[1] = -0.833
-
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
-//    B(1) = 1.0
-//    B(2) = -0.333
 
     var kmOne = Array.ofDim[Double](2,2)
-//    kmOne(0)(0) = C*B(1)*B(1)
-//    kmOne(0)(1) = C*B(1)*B(2)
-//    kmOne(1)(0) = C*B(2)*B(1)
-//    kmOne(1)(1) = C*B(2)*B(2)
-//
-//    println("constraint array one \n")
-//    matrix.prettyPrintDim2(kmOne)
-
-//    // insert at 1,5   note: indexs are minus -1 here
-//    K2(0)(0) += kmOne(0)(0)
-//    K2(0)(4) += kmOne(0)(1)
-//    K2(4)(0) += kmOne(1)(0)
-//    K2(4)(4) += kmOne(1)(1)
-
-    //var CB = Array.ofDim[Double](qRatios.length)
 
     for (i <- nodesArray.indices) {
       B(1) = 1.0
@@ -224,7 +203,7 @@ object FEMethods {
     } else Kg
 
     // solve for the displacement vector
-    val Q2 = matrix.gaussSeidel(Kg, p, 0.000000000001)
+    val Q2 = matrix.gaussSeidel(Kg, p, 0.0000000000001)
 
     println("-------------------------------------------------------")
     // Return the displacement vector
@@ -234,6 +213,10 @@ object FEMethods {
 
     var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_1.txt"
     var Q : Array[Double] = solverOneDOF(inputFileName)
+
+//    #NN     NE      NM      NDIM    NEN     NDN     ND     NL       NMPC    --- 1 line of data nine entries
+//      5,      2,      2,      2,      2,      1,      2,     1,       2
+
 
     println("FExample_1.txt")
     println("displacement array - Q")
