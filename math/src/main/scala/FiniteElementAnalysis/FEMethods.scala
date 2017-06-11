@@ -7,6 +7,7 @@ package FiniteElementAnalysis
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
+import calculateStress._
 import matrix._
 
 object FEMethods {
@@ -205,9 +206,17 @@ object FEMethods {
     // solve for the displacement vector
     val Q2 = matrix.gaussSeidel(Kg, p, 0.0000000000001)
 
+
+    // solve for stress
+    println("element stress")
+    matrix.printVector(calculateStress.stress(Q2, eModulus ))
+
     println("-------------------------------------------------------")
     // Return the displacement vector
     Q2
+
+
+
   }
   def main(args: Array[String]): Unit = {
 
