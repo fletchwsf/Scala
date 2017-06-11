@@ -7,7 +7,7 @@ import constraintSinglePoint._
 import org.scalatest.FunSuite
 
 /**
-  * Created by wsffl on 6/10/2017.
+  * Created by wsf on 6/10/2017.
   */
 class test_constraintSinglePoint extends FunSuite {
 
