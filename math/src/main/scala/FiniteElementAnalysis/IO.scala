@@ -1,5 +1,7 @@
 package FiniteElementAnalysis
 
+import FiniteElementAnalysis.Main.{inputFile, nInput}
+
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -54,4 +56,32 @@ object IO {
     anArray
   }
 
+
+  def nInputValues(fileNameBuffer: ListBuffer[String]): Map[String,Int] = {
+
+    var nInputArray = readInts("nInput", fileNameBuffer)
+    var nInput = scala.collection.mutable.Map[String,Int]()
+
+    nInput += (("NN", nInputArray(0)))
+    nInput += (("NE", nInputArray(1)))
+    nInput += (("NM", nInputArray(2)))
+    nInput += (("NDIM", nInputArray(3)))
+    nInput += (("NDM", nInputArray(4)))
+    nInput += (("NEN", nInputArray(5)))
+    nInput += (("ND", nInputArray(6)))
+    nInput += (("NL", nInputArray(7)))
+    nInput += (("NMPC", nInputArray(8)))
+    nInput += (("NQ", nInput("NN") * nInput("NDM")))
+
+    println("nInput map values:")
+    for (e <- nInput) println(e.toString())
+
+    nInput.asInstanceOf[Map[String,Int]]
+  }
+
+
+
 }
+
+
+

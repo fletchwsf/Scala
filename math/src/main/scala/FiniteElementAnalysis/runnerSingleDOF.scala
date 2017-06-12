@@ -1,5 +1,8 @@
 package FiniteElementAnalysis
 
+import scala.collection.mutable.ListBuffer
+import scala.io.Source
+
 /**
   * Created by wsf on 6/11/2017.
   */
@@ -9,8 +12,18 @@ object runnerSingleDOF {
   def main(args: Array[String]): Unit = {
 
     // file name from command line
+    // todo insert the file name from the command line argument
+    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_2.txt"
 
     // read the input file into memory
+    val inputFile = new ListBuffer[String]
+    val bufferedSource = Source.fromFile(inputFileName)
+    for (line <- bufferedSource.getLines)
+      inputFile += line
+    bufferedSource.close
+
+    // read in the nInput list that defines the general values for the model
+    val nInput = IO.nInputValues(inputFile)
 
     // read the degree-of-freedom value for the model
 
