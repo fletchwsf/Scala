@@ -8,7 +8,7 @@ object constraintSinglePoint {
 
   def add(
                                  kMatrix : Array[Array[Double]],
-                                 constraints : Array[Int]
+                                 constraints : Array[Integer]
                                  ): Array[Array[Double]] = {
 
     val C : Double  = matrix.max(kMatrix) * 10000.0

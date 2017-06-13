@@ -11,9 +11,9 @@ import matrix._
 object stiffnessMatrix {
 
   // Build a stiffness matrix with no constraints
-  def kBuild( con : Array[Array[Int]],
-              DOF : Int,
-              localDOF : Int,
+  def kBuild( con : Array[Array[Integer]],
+              DOF : Integer,
+              localDOF : Integer,
               eArea : Array[Double],
               eLength : Array[Double],
               eModulus : Array[Double]
@@ -22,7 +22,7 @@ object stiffnessMatrix {
     var K = Array.ofDim[Double](DOF, DOF)
 
     // define the element strain displacement matrix - eSDM
-    var eSDM = Array.ofDim[Int](localDOF,localDOF)
+    var eSDM = Array.ofDim[Integer](localDOF,localDOF)
     localDOF match {
       case 2 =>              // eSDM for an element with linear shape function
         eSDM (0) (0) = 1

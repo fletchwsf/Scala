@@ -31,7 +31,7 @@ object Main extends App {
 
 
   // nInput - The number parameters that define attributes of the problem and finite element arrays
-  var nInput = scala.collection.mutable.Map[String,Int]()
+  var nInput = scala.collection.mutable.Map[String,Integer]()
   nInput += (("NN",-1), ("NE",-1), ("NM",-1), ("NDIM",-1),("NEN",-1), ("NDM",-1), ("ND",-1), ("NL",-1), ("NMPC",-1))
   nInput += (("NQ", nInput("NN") * nInput("NDM")  ))
 

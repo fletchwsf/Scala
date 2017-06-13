@@ -5,13 +5,13 @@ package FiniteElementAnalysis
   */
 object calculateStress {
 
-  def stress(displacement : Array[Double], modulus : Array[Double]) : Array[Double] = {
+  def stress(connectionTable : Array[Array[Integer]], eDisplacement : Array[Double], eLength: Array[Double], eModulus : Array[Double]) : Array[Double] = {
 
-    println("DUMMY FUNCTION IN FILE: calculateStress NEEDS TO BE FIXED HERE ")
-    val sigma = Array.ofDim[Double](displacement.length)
+    val sigma = Array.ofDim[Double](eLength.length)
 
       for(i <- sigma.indices)
-        sigma(i) = displacement(i)
+        // todo Replace hardcoded 1,0 with the correct generalized indices value
+        sigma(i) = eModulus(i) / eLength(i) * (eDisplacement(connectionTable(i)(1)) - eDisplacement(connectionTable(i)(0)) )
 
     sigma
   }

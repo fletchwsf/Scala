@@ -73,14 +73,14 @@ object FEMethods {
     K2
   }
 
-  def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Int = {
+  def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Integer = {
     var lineNum = -1
     for(i <- fileNameBuffer.indices) {
       if (fileNameBuffer(i).contains(lineName)) lineNum = i + 1
     }
     lineNum
   }
-  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
+  def loadArray(lineName: String, nElements: Integer, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
     var anArray =  Array.ofDim[Integer](nElements,nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
@@ -92,7 +92,7 @@ object FEMethods {
     matrix.printArray(anArray)
     anArray
   }
-  def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
+  def loadVector(lineName: String, nElements: Integer, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
     var anArray = Array.ofDim[Double](nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     println(s" loading array: $lineName")
@@ -209,7 +209,12 @@ object FEMethods {
 
     // solve for stress
     println("element stress")
-    matrix.printVector(calculateStress.stress(Q2, eModulus ))
+    println("expected: | 21.6 | 28.35 |")
+    val eStress = calculateStress.stress(connectionTable, Q2, eLength, eModulus)
+    matrix.printVector(eStress.map( _ * 1000.0))
+
+
+
 
     println("-------------------------------------------------------")
     // Return the displacement vector

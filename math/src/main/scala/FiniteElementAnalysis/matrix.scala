@@ -233,7 +233,7 @@ object  matrix {
     for(i <- inArray) yield {
       for(j <- i) yield {
         j match {
-          case j:Int => outBuffer.append(f"| ${j.toInt}%- 5d ")
+          case j:Integer => outBuffer.append(f"| ${j.toInt}%- 5d ")
           case j:Double => outBuffer.append(f"|  ${j.toDouble}%- 15.5f  ")
         }
       }
@@ -248,7 +248,7 @@ object  matrix {
     var outBuffer = new StringBuffer()
       for(j <- inArray ) yield {
         j match {
-          case j:Int => outBuffer.append(f"|${j.toInt}%- 5d ")
+          case j:Integer => outBuffer.append(f"|${j.toInt}%- 5d ")
           case j:Double => outBuffer.append(f"|${j.toDouble}%- 15.5f  ")
         }
 

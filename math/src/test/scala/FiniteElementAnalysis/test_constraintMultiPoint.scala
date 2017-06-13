@@ -30,7 +30,7 @@ class test_constraintMultiPoint extends FunSuite {
     val localDOF = 2
 
     // note correct the connection matrix entries by -1
-    var con = Array.ofDim[Int](2, 2)
+    var con = Array.ofDim[Integer](2, 2)
     con(0)(0) = 3 - 1
     con(0)(1) = 1 - 1
     con(1)(0) = 4 - 1
@@ -53,7 +53,7 @@ class test_constraintMultiPoint extends FunSuite {
     val C : Double  = matrix.max(tmp1) * 10000.0
 
     // Add single point constraints
-    val spNodes = Array.ofDim[Int](2)
+    val spNodes = Array.ofDim[Integer](2)
     spNodes(0) = 3 - 1
     spNodes(1) = 4 - 1
 
@@ -97,5 +97,24 @@ class test_constraintMultiPoint extends FunSuite {
     for (i <- answer.indices)
       for (j <- answer.indices)
         assert(result(i)(j) === answer(i)(j) +- 10.0, "example 3.6 failed")
+
+    var p = Array.ofDim[Double](5)
+    p(0) = 0.0
+    p(1) = 0.0
+    p(2) = 0.0
+    p(3) = 0.0
+    p(4) = 30.0
+
+
+    // solve for the displacement vector
+    val Q2 = matrix.gaussSeidel(answer, p, 0.0000000000001)
+
+    // solve for stress
+    println("element stress")
+    println("expected: | 21.6 | 28.35 |")
+    val eStress = calculateStress.stress(con, Q2, eLength, eModulus)
+    matrix.printVector(eStress.map( _ * 1000.0))
+
+
   }
 }

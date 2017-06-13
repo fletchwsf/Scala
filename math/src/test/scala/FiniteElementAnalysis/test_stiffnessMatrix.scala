@@ -22,7 +22,7 @@ class test_stiffnessMatrix extends FunSuite  {
     val totalDOF = nOfNodes * nDOFperNode
     val localDOF = 2
 
-    var con = Array.ofDim[Int](2,2)
+    var con = Array.ofDim[Integer](2,2)
     con(0)(0) = 0
     con(0)(1) = 1
     con(1)(0) = 1
@@ -59,7 +59,7 @@ class test_stiffnessMatrix extends FunSuite  {
     val nDOFPerNode = 1
     val totalDOF = nNodes * nDOFPerNode
     val localDOF = 2
-    var con = Array.ofDim[Int](2,2)
+    var con = Array.ofDim[Integer](2,2)
     con(0)(0) = 0
     con(0)(1) = 1
     con(1)(0) = 1
@@ -93,7 +93,7 @@ class test_stiffnessMatrix extends FunSuite  {
     val localDOF = 2
 
     // note correct the connection matrix entries by -1
-    var con = Array.ofDim[Int](2,2)
+    var con = Array.ofDim[Integer](2,2)
     con(0)(0) = 3 - 1
     con(0)(1) = 1 - 1
     con(1)(0) = 4 - 1
@@ -153,7 +153,7 @@ class test_stiffnessMatrix extends FunSuite  {
     // note - correct the connection array by -1
     //  1 | 1, 3, 2
     //  2 | 3, 5, 4
-    var con = Array.ofDim[Int](2,3)
+    var con = Array.ofDim[Integer](2,3)
     con(0)(0) = 1 - 1
     con(0)(1) = 3 - 1
     con(0)(2) = 2 - 1

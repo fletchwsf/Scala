@@ -23,7 +23,7 @@ class test_constraintSinglePoint extends FunSuite {
     testMatrix(1)(0) = -1.0
     testMatrix(1)(1) = 1.0
 
-    val constraintArray = Array.ofDim[Int](2)
+    val constraintArray = Array.ofDim[Integer](2)
     constraintArray(0) = 0
     constraintArray(1) = 1
 
