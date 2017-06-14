@@ -12,8 +12,8 @@ import matrix._
 
 object FEMethods {
 
-  def kBuild( con : Array[Array[Integer]],
-                DOF : Integer,
+  def kBuild( con : Array[Array[Int]],
+                DOF : Int,
                 eArea : Array[Double],
                 eLength : Array[Double],
                 eModulus : Array[Double]
@@ -36,7 +36,7 @@ object FEMethods {
 
   def addSinglePointConstraints(
                                  kMatrix : Array[Array[Double]],
-                                  constraints : Array[Integer],
+                                  constraints : Array[Int],
                                   C: Double): Array[Array[Double]] = {
 
     for(i <- constraints.indices)
@@ -46,7 +46,7 @@ object FEMethods {
 
   def addMultiPointConstraints(  K2 : Array[Array[Double]],
                                  C: Double,
-                                 nodesArray: Array[Array[Integer]],
+                                 nodesArray: Array[Array[Int]],
                                  qRatios: Array[Double]
                               ): Array[Array[Double]] = {
 
@@ -73,15 +73,15 @@ object FEMethods {
     K2
   }
 
-  def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Integer = {
+  def findLineFor(lineName: String, fileNameBuffer: ListBuffer[String] ): Int = {
     var lineNum = -1
     for(i <- fileNameBuffer.indices) {
       if (fileNameBuffer(i).contains(lineName)) lineNum = i + 1
     }
     lineNum
   }
-  def loadArray(lineName: String, nElements: Integer, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
-    var anArray =  Array.ofDim[Integer](nElements,nElements)
+  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
+    var anArray =  Array.ofDim[Int](nElements,nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
@@ -92,7 +92,7 @@ object FEMethods {
     matrix.printArray(anArray)
     anArray
   }
-  def loadVector(lineName: String, nElements: Integer, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
+  def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
     var anArray = Array.ofDim[Double](nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     println(s" loading array: $lineName")
@@ -117,23 +117,23 @@ object FEMethods {
     for (i <- inputFile.indices){
       if (inputFile(i).contains("freedom")) DOF_string = inputFile(i+1)
     }
-    val DOF : Integer = DOF_string.toInt
+    val DOF : Int = DOF_string.toInt
 
     // read in the  number of elements in the model
     var elementCount_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("elements")) elementCount_string = inputFile(i+1)
     }
-    val elementCount : Integer = elementCount_string.toInt
+    val elementCount : Int = elementCount_string.toInt
 
     // read in the nodes with single point constraints
-    var constraints = Array.ofDim[Integer](elementCount)
+    var constraints = Array.ofDim[Int](elementCount)
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
     // Setup the element connection table array
-    var connectionTable = Array.ofDim[Integer](elementCount,elementCount)
+    var connectionTable = Array.ofDim[Int](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
     // Setup the element cross-sectional area array
@@ -159,10 +159,10 @@ object FEMethods {
     for (i <- inputFile.indices){
       if (inputFile(i).contains("NMP")) nMultiPointsCount_string = inputFile(i+1)
     }
-    val NMP : Integer = nMultiPointsCount_string.toInt
+    val NMP : Int = nMultiPointsCount_string.toInt
     println(s"number of multipoint nodes:$NMP")
     //  read in the multi-point constraints
-    var mpNodes = Array.ofDim[Integer](NMP,2)
+    var mpNodes = Array.ofDim[Int](NMP,2)
     var mpQRatio = Array.ofDim[Double](NMP)
     val startsAt = findLineFor("multipoint", inputFile)
     for ( i <- mpNodes.indices) {

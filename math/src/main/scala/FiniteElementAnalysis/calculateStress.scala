@@ -5,7 +5,7 @@ package FiniteElementAnalysis
   */
 object calculateStress {
 
-  def stress(connectionTable : Array[Array[Integer]], eDisplacement : Array[Double], eLength: Array[Double], eModulus : Array[Double]) : Array[Double] = {
+  def stress(connectionTable : Array[Array[Int]], eDisplacement : Array[Double], eLength: Array[Double], eModulus : Array[Double]) : Array[Double] = {
 
     val sigma = Array.ofDim[Double](eLength.length)
 

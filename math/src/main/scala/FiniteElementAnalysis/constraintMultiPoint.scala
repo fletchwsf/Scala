@@ -7,7 +7,7 @@ object constraintMultiPoint {
 
   def add(  K2 : Array[Array[Double]],
             C: Double,
-            nodesArray: Array[Array[Integer]],
+            nodesArray: Array[Array[Int]],
             qRatios: Array[Double]
          ): Array[Array[Double]] = {
 

@@ -33,8 +33,8 @@ object IO {
 
 
 
-  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
-    var anArray =  Array.ofDim[Integer](nElements,nElements)
+  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
+    var anArray =  Array.ofDim[Int](nElements,nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
@@ -45,7 +45,7 @@ object IO {
     matrix.printArray(anArray)
     anArray
   }
-  def loadVector(lineName: String, nElements: Integer, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
+  def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
     var anArray = Array.ofDim[Double](nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     println(s" loading array: $lineName")
@@ -57,10 +57,10 @@ object IO {
   }
 
 
-  def nInputValues(fileNameBuffer: ListBuffer[String]): Map[String,Integer] = {
+  def nInputValues(fileNameBuffer: ListBuffer[String]): Map[String,Int] = {
 
     var nInputArray = readInts("nInput", fileNameBuffer)
-    var nInput = scala.collection.mutable.Map[String,Integer]()
+    var nInput = scala.collection.mutable.Map[String,Int]()
 
     nInput += (("NN", nInputArray(0)))
     nInput += (("NE", nInputArray(1)))
@@ -76,7 +76,7 @@ object IO {
     println("nInput map values:")
     for (e <- nInput) println(e.toString())
 
-    nInput.asInstanceOf[Map[String,Integer]]
+    nInput.asInstanceOf[Map[String,Int]]
   }
 
 

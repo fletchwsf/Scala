@@ -30,14 +30,14 @@ class test_constraintMultiPoint extends FunSuite {
     val localDOF = 2
 
     // note correct the connection matrix entries by -1
-    var con = Array.ofDim[Integer](2, 2)
+    var con = Array.ofDim[Int](2, 2)
     con(0)(0) = 3 - 1
     con(0)(1) = 1 - 1
     con(1)(0) = 4 - 1
     con(1)(1) = 2 - 1
 
     // multi point nodes with node number correction of -1
-    var mpNodes = Array.ofDim[Integer](2,2)
+    var mpNodes = Array.ofDim[Int](2,2)
     mpNodes(0)(0) = 1 - 1
     mpNodes(0)(1) = 5 - 1
     mpNodes(1)(0) = 2 - 1
@@ -53,7 +53,7 @@ class test_constraintMultiPoint extends FunSuite {
     val C : Double  = matrix.max(tmp1) * 10000.0
 
     // Add single point constraints
-    val spNodes = Array.ofDim[Integer](2)
+    val spNodes = Array.ofDim[Int](2)
     spNodes(0) = 3 - 1
     spNodes(1) = 4 - 1
 
@@ -113,7 +113,16 @@ class test_constraintMultiPoint extends FunSuite {
     println("element stress")
     println("expected: | 21.6 | 28.35 |")
     val eStress = calculateStress.stress(con, Q2, eLength, eModulus)
-    matrix.printVector(eStress.map( _ * 1000.0))
+    // scale the results
+    val result2 = eStress.map( _ * 10.0 )
+    matrix.printVector(eStress)
+
+    val answer2 = Array.ofDim[Double](2)
+    answer2(0) = 21.6
+    answer2(1) = 28.35
+
+    for (i <- answer2.indices)
+      assert(result2(i) === answer2(i) +- 1.0, "example 3.6 stress calculation is wrong")
 
 
   }
