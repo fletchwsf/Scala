@@ -206,16 +206,12 @@ object FEMethods {
     // solve for the displacement vector
     val Q2 = matrix.gaussSeidel(Kg, p, 0.0000000000001)
 
-
     // solve for stress
     println("element stress")
     println("expected: | 21.6 | 28.35 |")
     val eStress = calculateStress.stress(connectionTable, Q2, eLength, eModulus)
-    matrix.printVector(eStress.map( _ * 1000.0))
-
-
-
-
+    //matrix.printVector(eStress.map( _ * 1000.0))
+    matrix.printVector(eStress)
     println("-------------------------------------------------------")
     // Return the displacement vector
     Q2

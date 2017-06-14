@@ -105,13 +105,10 @@ class test_constraintMultiPoint extends FunSuite {
     p(3) = 0.0
     p(4) = 30.0
 
-
     // solve for the displacement vector
     val Q2 = matrix.gaussSeidel(answer, p, 0.0000000000001)
 
     // solve for stress
-    println("element stress")
-    println("expected: | 21.6 | 28.35 |")
     val eStress = calculateStress.stress(con, Q2, eLength, eModulus)
     // scale the results
     val result2 = eStress.map( _ * 10.0 )
