@@ -12,14 +12,14 @@ import FiniteElementAnalysis.stiffnessMatrix
   val totalDOF = nNodes * nDOFperNode
   val localDOF = 3
 
-  var con = Array.ofDim[Int](2,2)
+val con = Array.ofDim[Int](2, 2)
   con(0)(0) = 0
   con(0)(1) = 1
   con(1)(0) = 1
   con(1)(1) = 2
 
   val example = stiffnessMatrix.kBuild(con, 4, localDOF, eArea, eLength, eModulus)
-  var result = Array.ofDim[Double](4,4)
+val result = Array.ofDim[Double](4, 4)
   result(0)(0) = 7.0
   result(0)(1) = 1.0
   result(0)(2) = -8.0
