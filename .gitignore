@@ -1,4 +1,16 @@
 # Scala project files
+bin/
+project/
+target/
+build/
+
+# intellij idea
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
 *.xml
 *.xls
 *.xsl
@@ -6,7 +18,7 @@
 *.sbt
 *.properties
 *.class
-*.iml
+
 *.cache
 *.css
 *target*
