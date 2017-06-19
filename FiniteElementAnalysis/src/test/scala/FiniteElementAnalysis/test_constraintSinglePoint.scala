@@ -2,14 +2,14 @@ package FiniteElementAnalysis
 
 import org.scalatest.Matchers._
 
-import singlePointConstraints._
+import constraintSinglePoint._
 
 import org.scalatest.FunSuite
 
 /**
-  * Created by wsffl on 6/10/2017.
+  * Created by wsf on 6/10/2017.
   */
-class test_singlePointConstraints extends FunSuite {
+class test_constraintSinglePoint extends FunSuite {
 
   // This function finds the maximum value in the testMatrix, multiplies that
   //  value by 10000, and adds that value into the textMatrix at points
@@ -34,7 +34,7 @@ class test_singlePointConstraints extends FunSuite {
     answerMatrix(1)(0) = -1.0
     answerMatrix(1)(1) = 1010001.0
 
-    val result = addSinglePointConstraints(testMatrix, constraintArray)
+    val result = constraintSinglePoint.add(testMatrix, constraintArray)
 
     for (i <- result.indices)
       for (j <- result.indices)

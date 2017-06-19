@@ -7,17 +7,18 @@ package FiniteElementAnalysis
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
+import calculateStress._
 import matrix._
 
 object FEMethods {
 
-  def kBuild( con : Array[Array[Integer]],
-                DOF : Integer,
+  def kBuild( con : Array[Array[Int]],
+                DOF : Int,
                 eArea : Array[Double],
                 eLength : Array[Double],
                 eModulus : Array[Double]
               ) : Array[Array[Double]] = {
-    var K = Array.ofDim[Double](DOF, DOF)
+    val K = Array.ofDim[Double](DOF, DOF)
     var sign = 1
 
     // build stiffness matrix with no constraints
@@ -35,7 +36,7 @@ object FEMethods {
 
   def addSinglePointConstraints(
                                  kMatrix : Array[Array[Double]],
-                                  constraints : Array[Integer],
+                                  constraints : Array[Int],
                                   C: Double): Array[Array[Double]] = {
 
     for(i <- constraints.indices)
@@ -45,14 +46,14 @@ object FEMethods {
 
   def addMultiPointConstraints(  K2 : Array[Array[Double]],
                                  C: Double,
-                                 nodesArray: Array[Array[Integer]],
+                                 nodesArray: Array[Array[Int]],
                                  qRatios: Array[Double]
                               ): Array[Array[Double]] = {
 
     val B = Array.ofDim[Double](3)
     B(0) = 0.0
 
-    var kmOne = Array.ofDim[Double](2,2)
+    val kmOne = Array.ofDim[Double](2, 2)
 
     for (i <- nodesArray.indices) {
       B(1) = 1.0
@@ -79,8 +80,8 @@ object FEMethods {
     }
     lineNum
   }
-  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Integer]] = {
-    var anArray =  Array.ofDim[Integer](nElements,nElements)
+  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
+    val anArray = Array.ofDim[Int](nElements, nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     for ( i <- anArray.indices) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
@@ -92,7 +93,7 @@ object FEMethods {
     anArray
   }
   def loadVector(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Double] = {
-    var anArray = Array.ofDim[Double](nElements)
+    val anArray = Array.ofDim[Double](nElements)
     val startsAt = findLineFor(lineName, fileNameBuffer)
     println(s" loading array: $lineName")
     for (i <- anArray.indices) {
@@ -116,23 +117,23 @@ object FEMethods {
     for (i <- inputFile.indices){
       if (inputFile(i).contains("freedom")) DOF_string = inputFile(i+1)
     }
-    val DOF : Integer = DOF_string.toInt
+    val DOF : Int = DOF_string.toInt
 
     // read in the  number of elements in the model
     var elementCount_string = new String
     for (i <- inputFile.indices){
       if (inputFile(i).contains("elements")) elementCount_string = inputFile(i+1)
     }
-    val elementCount : Integer = elementCount_string.toInt
+    val elementCount : Int = elementCount_string.toInt
 
     // read in the nodes with single point constraints
-    var constraints = Array.ofDim[Integer](elementCount)
+    val constraints = Array.ofDim[Int](elementCount)
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
     // Setup the element connection table array
-    var connectionTable = Array.ofDim[Integer](elementCount,elementCount)
+    var connectionTable = Array.ofDim[Int](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
     // Setup the element cross-sectional area array
@@ -158,11 +159,11 @@ object FEMethods {
     for (i <- inputFile.indices){
       if (inputFile(i).contains("NMP")) nMultiPointsCount_string = inputFile(i+1)
     }
-    val NMP : Integer = nMultiPointsCount_string.toInt
+    val NMP : Int = nMultiPointsCount_string.toInt
     println(s"number of multipoint nodes:$NMP")
     //  read in the multi-point constraints
-    var mpNodes = Array.ofDim[Integer](NMP,2)
-    var mpQRatio = Array.ofDim[Double](NMP)
+    val mpNodes = Array.ofDim[Int](NMP, 2)
+    val mpQRatio = Array.ofDim[Double](NMP)
     val startsAt = findLineFor("multipoint", inputFile)
     for ( i <- mpNodes.indices) {
       val col = inputFile(i + startsAt).split(",").map(_.trim)
@@ -205,20 +206,30 @@ object FEMethods {
     // solve for the displacement vector
     val Q2 = matrix.gaussSeidel(Kg, p, 0.0000000000001)
 
+    // solve for stress
+    println("element stress")
+    println("expected: | 21.6 | 28.35 |")
+    val eStress = calculateStress.stress(connectionTable, Q2, eLength, eModulus)
+    //matrix.printVector(eStress.map( _ * 1000.0))
+    matrix.printVector(eStress)
     println("-------------------------------------------------------")
     // Return the displacement vector
     Q2
+
+
+
   }
   def main(args: Array[String]): Unit = {
 
-    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_1.txt"
+    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_3-6.txt"
+
     var Q : Array[Double] = solverOneDOF(inputFileName)
 
 //    #NN     NE      NM      NDIM    NEN     NDN     ND     NL       NMPC    --- 1 line of data nine entries
 //      5,      2,      2,      2,      2,      1,      2,     1,       2
 
 
-    println("FExample_1.txt")
+    println(s"Running file:$args(1)")
     println("displacement array - Q")
     matrix.printVector(Q)
     println("expected results")

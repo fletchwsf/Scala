@@ -20,7 +20,7 @@ object OneDimensionSolver {
 
 object Main extends App {
 
-  var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_2.txt"
+  val inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_2.txt"
 
   // read the input file into memory
   val inputFile = new ListBuffer[String]
@@ -31,11 +31,11 @@ object Main extends App {
 
 
   // nInput - The number parameters that define attributes of the problem and finite element arrays
-  var nInput = scala.collection.mutable.Map[String,Int]()
+  var nInput = scala.collection.mutable.Map[String,Integer]()
   nInput += (("NN",-1), ("NE",-1), ("NM",-1), ("NDIM",-1),("NEN",-1), ("NDM",-1), ("ND",-1), ("NL",-1), ("NMPC",-1))
   nInput += (("NQ", nInput("NN") * nInput("NDM")  ))
 
-  var nInputArray = FiniteElementAnalysis.IO.readInts("nInput", inputFile)
+  val nInputArray = FiniteElementAnalysis.IO.readInts("nInput", inputFile)
   nInput.update("NN",nInputArray(0))
   nInput.update("NE",nInputArray(1))
   nInput.update("NM",nInputArray(2))

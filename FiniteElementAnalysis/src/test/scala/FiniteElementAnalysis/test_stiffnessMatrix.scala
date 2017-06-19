@@ -22,14 +22,14 @@ class test_stiffnessMatrix extends FunSuite  {
     val totalDOF = nOfNodes * nDOFperNode
     val localDOF = 2
 
-    var con = Array.ofDim[Int](2,2)
+    val con = Array.ofDim[Int](2, 2)
     con(0)(0) = 0
     con(0)(1) = 1
     con(1)(0) = 1
     con(1)(1) = 2
 
     val result = stiffnessMatrix.kBuild(con, totalDOF, localDOF, eArea, eLength, eModulus)
-    var answer = Array.ofDim[Double](totalDOF,totalDOF)
+    val answer = Array.ofDim[Double](totalDOF, totalDOF)
     answer(0)(0) = 1.0
     answer(0)(1) = -1.0
     answer(0)(2) = 0.0
@@ -59,14 +59,14 @@ class test_stiffnessMatrix extends FunSuite  {
     val nDOFPerNode = 1
     val totalDOF = nNodes * nDOFPerNode
     val localDOF = 2
-    var con = Array.ofDim[Int](2,2)
+    val con = Array.ofDim[Int](2, 2)
     con(0)(0) = 0
     con(0)(1) = 1
     con(1)(0) = 1
     con(1)(1) = 2
 
     val answer = stiffnessMatrix.kBuild(con, totalDOF, localDOF, eArea, eLength, eModulus)
-    var expected = Array.ofDim[Double](totalDOF,totalDOF)
+    val expected = Array.ofDim[Double](totalDOF, totalDOF)
     expected(0)(0) = 5.25
     expected(0)(1) = -5.25
     expected(0)(2) = 0.0
@@ -93,14 +93,14 @@ class test_stiffnessMatrix extends FunSuite  {
     val localDOF = 2
 
     // note correct the connection matrix entries by -1
-    var con = Array.ofDim[Int](2,2)
+    val con = Array.ofDim[Int](2, 2)
     con(0)(0) = 3 - 1
     con(0)(1) = 1 - 1
     con(1)(0) = 4 - 1
     con(1)(1) = 2 - 1
 
     val result = stiffnessMatrix.kBuild(con, totalDOF, localDOF, eArea, eLength, eModulus)
-    var answer = Array.ofDim[Double](totalDOF,totalDOF)
+    val answer = Array.ofDim[Double](totalDOF, totalDOF)
 
     answer(0)(0) = 53.33
     answer(0)(1) = 0.0
@@ -153,7 +153,7 @@ class test_stiffnessMatrix extends FunSuite  {
     // note - correct the connection array by -1
     //  1 | 1, 3, 2
     //  2 | 3, 5, 4
-    var con = Array.ofDim[Int](2,3)
+    val con = Array.ofDim[Int](2, 3)
     con(0)(0) = 1 - 1
     con(0)(1) = 3 - 1
     con(0)(2) = 2 - 1
@@ -162,7 +162,7 @@ class test_stiffnessMatrix extends FunSuite  {
     con(1)(2) = 4 - 1
 
     val result = stiffnessMatrix.kBuild(con, totalDOF, localDOF, eArea, eLength, eModulus)
-    var answer = Array.ofDim[Double](5,5)
+    val answer = Array.ofDim[Double](5, 5)
     answer(0)(0) = 7.0
     answer(0)(1) = -8.0
     answer(0)(2) = 1.0

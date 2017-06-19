@@ -19,10 +19,10 @@ object stiffnessMatrix {
               eModulus : Array[Double]
             ) : Array[Array[Double]] = {
 
-    var K = Array.ofDim[Double](DOF, DOF)
+    val K = Array.ofDim[Double](DOF, DOF)
 
     // define the element strain displacement matrix - eSDM
-    var eSDM = Array.ofDim[Int](localDOF,localDOF)
+    val eSDM = Array.ofDim[Int](localDOF, localDOF)
     localDOF match {
       case 2 =>              // eSDM for an element with linear shape function
         eSDM (0) (0) = 1

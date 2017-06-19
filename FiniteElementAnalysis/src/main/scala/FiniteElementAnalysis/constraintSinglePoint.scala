@@ -1,12 +1,12 @@
 package FiniteElementAnalysis
 
 /**
-  * Created by wsffl on 6/10/2017.
+  * Created by wsf on 6/10/2017.
   */
-object singlePointConstraints {
+object constraintSinglePoint {
 
 
-  def addSinglePointConstraints(
+  def add(
                                  kMatrix : Array[Array[Double]],
                                  constraints : Array[Int]
                                  ): Array[Array[Double]] = {

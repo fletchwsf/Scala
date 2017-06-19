@@ -1,10 +1,9 @@
-package test_FiniteElementAnalysis
+package FiniteElementAnalysis
 
 /**
   * Created by wsf on 4/15/2017.
   */
 
-import FiniteElementAnalysis.matrix
 import org.scalatest._
 
 class test_matrix extends FunSuite {
@@ -125,7 +124,7 @@ class test_matrix extends FunSuite {
   }
 
     test("gaussian elimination - 2") {
-      var y = Array.ofDim[Double](3, 3)
+      val y = Array.ofDim[Double](3, 3)
       y(0)(0) = 2.0
       y(0)(1) = 1.0
       y(0)(2) = -1.0

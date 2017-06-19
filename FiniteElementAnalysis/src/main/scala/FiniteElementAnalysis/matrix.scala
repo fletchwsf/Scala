@@ -10,7 +10,7 @@ import scala.util.control.Breaks._
 object  matrix {
 
   def addVectors(x: Array[Double], y : Array[Double]) : Array[Double] = {
-    var z = Array.ofDim[Double](x.length)
+    val z = Array.ofDim[Double](x.length)
     for {
       i <- x.indices
     } z(i) = x(i) + y(i)
@@ -18,7 +18,7 @@ object  matrix {
   }
 
   def subVectors(x: Array[Double], y : Array[Double]) : Array[Double] = {
-    var z = Array.ofDim[Double](x.length)
+    val z = Array.ofDim[Double](x.length)
     for {
       i <- x.indices
     } z(i) = x(i) - y(i)
@@ -26,7 +26,7 @@ object  matrix {
   }
 
   def add(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
-    var z = Array.ofDim[Double](x.length, y.length)
+    val z = Array.ofDim[Double](x.length, y.length)
     for {
       i <- x.indices
       j <- x.indices
@@ -41,7 +41,7 @@ object  matrix {
   }
 
   def subtract(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
-    var z = Array.ofDim[Double](x.length, y.length)
+    val z = Array.ofDim[Double](x.length, y.length)
     for {
       i <- x.indices
       j <- x.indices
@@ -50,7 +50,7 @@ object  matrix {
   }
 
   def multiply(x : Array[Array[Double]], y : Array[Array[Double]]): Array[Array[Double]] = {
-    var z = Array.ofDim[Double](x.length, y.length)
+    val z = Array.ofDim[Double](x.length, y.length)
     for {
       i <- x.indices
       j <- x.indices
@@ -72,11 +72,11 @@ object  matrix {
     println("Gassuian Elimination z,d")
     println("----------------------------------------")
     prettyPrintAxB(a,d)
-    var x = Array.ofDim[Double](a.length)
+    val x = Array.ofDim[Double](a.length)
     val n = a.length -1
     for ( i <- 0 until n ){
       for (k <- i + 1 to n){
-        var m = a(k)(i) / a(i)(i)
+        val m = a(k)(i) / a(i)(i)
         a(k)(i) = 0
         for (j <- i + 1 to n) {
           a(k)(j) -= m * a(i)(j)
@@ -86,7 +86,7 @@ object  matrix {
     }
     // back substitution
     for (ii <- a.indices ) {
-      var i = n - ii
+      val i = n - ii
       for ( j <- i + 1 to n){
         d(i) -= a(i)(j) * x(j)
       }
@@ -106,10 +106,10 @@ object  matrix {
     // temporary values
     var gg1 : Double = 0.0
     // define arrays
-    var ad = Array.ofDim[Double](b.length)
-    var x = Array.ofDim[Double](b.length)
-    var g = Array.ofDim[Double](b.length)
-    var d = Array.ofDim[Double](b.length)
+    val ad = Array.ofDim[Double](b.length)
+    val x = Array.ofDim[Double](b.length)
+    val g = Array.ofDim[Double](b.length)
+    val d = Array.ofDim[Double](b.length)
     // initialize the arrays
     for ( i <- x.indices){
       x(i) = 0.0
@@ -165,9 +165,9 @@ object  matrix {
     println("Gauss-Seidel Solver Ax = b ")
     println("----------------------------------------")
     prettyPrintAxB(a,d)
-    var x = Array.ofDim[Double](d.length)
+    val x = Array.ofDim[Double](d.length)
     for (j <- x.indices) x(j) = 0.0
-    var y = Array.ofDim[Double](a.length)
+    val y = Array.ofDim[Double](a.length)
     for (i <- y.indices) y(i) = 0.0
     var diff = 0.0
     val n = a.length - 1
@@ -215,7 +215,7 @@ object  matrix {
   }
 
   def prettyPrintAxB(a : Array[Array[Double]], b: Array[Double]) : Unit = {
-    var z = new StringBuffer()
+    val z = new StringBuffer()
     for {
       j <- b.indices
     } {
@@ -229,11 +229,11 @@ object  matrix {
 
   // print out a 2-dimensional array with formatting
   def printArray[A](inArray :Array[Array[A]]): Unit = {
-    var outBuffer = new StringBuffer()
+    val outBuffer = new StringBuffer()
     for(i <- inArray) yield {
       for(j <- i) yield {
         j match {
-          case j:Int => outBuffer.append(f"| ${j.toInt}%- 5d ")
+          case j:Integer => outBuffer.append(f"| ${j.toInt}%- 5d ")
           case j:Double => outBuffer.append(f"|  ${j.toDouble}%- 15.5f  ")
         }
       }
@@ -245,10 +245,10 @@ object  matrix {
 
   // print out a 1-dimensional array with formatting
   def printVector[A](inArray :Array[A]): Unit = {
-    var outBuffer = new StringBuffer()
+    val outBuffer = new StringBuffer()
       for(j <- inArray ) yield {
         j match {
-          case j:Int => outBuffer.append(f"|${j.toInt}%- 5d ")
+          case j:Integer => outBuffer.append(f"|${j.toInt}%- 5d ")
           case j:Double => outBuffer.append(f"|${j.toDouble}%- 15.5f  ")
         }
 
@@ -283,7 +283,7 @@ object  matrix {
     prettyPrintAxB(a3,d3)
 
 
-    var z2 = Array.ofDim[Double](3, 3)
+    val z2 = Array.ofDim[Double](3, 3)
     z2(0)(0) = 3.0
     z2(0)(1) = 4.0
     z2(0)(2) = 3.0
@@ -297,13 +297,13 @@ object  matrix {
     // Use Conjugate Gradient Solver
     //conjugateGradientSolver(z2,d3,0.00001)
 
-    var x2 = Array.ofDim[Double](2,2)
+    val x2 = Array.ofDim[Double](2, 2)
     x2(0)(0) = 2.0
     x2(0)(1) = 1.0
     x2(1)(0) = 2.0
     x2(1)(1) = 1.0
 
-    var d2 = Array.ofDim[Double](2)
+    val d2 = Array.ofDim[Double](2)
     d2(0) = 2.0
     d2(1) = 4.0
     // use conjugate gradient solver
