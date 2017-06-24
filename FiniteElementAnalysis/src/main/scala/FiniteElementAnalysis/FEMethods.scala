@@ -221,20 +221,17 @@ object FEMethods {
   }
   def main(args: Array[String]): Unit = {
 
-    var inputFileName = "D:\\Scala\\math\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_3-6.txt"
+   var inputFileName = "D:\\Scala\\FiniteElementAnalysis\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_3-6.txt"
 
-    var Q : Array[Double] = solverOneDOF(inputFileName)
-
-//    #NN     NE      NM      NDIM    NEN     NDN     ND     NL       NMPC    --- 1 line of data nine entries
-//      5,      2,      2,      2,      2,      1,      2,     1,       2
-
-
-    println(s"Running file:$args(1)")
+    // solve for element displacement
+   // var Q : Array[Double] = solverOneDOF(args(1))
+   var Q : Array[Double] = solverOneDOF(inputFileName)
+    println(s"Running file named:$args(1)")
     println("displacement array - Q")
     matrix.printVector(Q)
-    println("expected results")
-    println(" | 0.48247         | 1.20697         | 0.00005         | 0.00005         | 1.44900")
-    // need function to calculate stresses
+
+    println("need to get expected results from input file heading")
+    println("missing function to calculate stresses")
 
 
 
