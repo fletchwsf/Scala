@@ -149,7 +149,7 @@ object solverOneDimension {
 
     // Setup the element connection table array
     // todo - make connection table width a function of localDOF
-    var connectionTable = Array.ofDim[Int](elementCount,elementCount)
+    var connectionTable = Array.ofDim[Int](elementCount,localDOF)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
     // Setup the element cross-sectional area array
