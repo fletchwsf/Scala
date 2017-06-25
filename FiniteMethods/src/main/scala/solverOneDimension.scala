@@ -7,6 +7,7 @@ import scala.io.Source
 
 import calculateStress.stress
 import matrix._
+import stiffnessMatrix._
 
 object solverOneDimension {
 
@@ -189,7 +190,8 @@ object solverOneDimension {
 
     // Build the initial stiffness stiffness matrix
     var Kg = Array.ofDim[Double](DOF,DOF)
-    Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
+    //Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
+    Kg = stiffnessMatrix.kBuild(connectionTable, DOF, 2, eArea, eLength, eModulus)
     println("initialized stiffness array")
     matrix.printArray(Kg)
 

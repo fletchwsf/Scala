@@ -1,5 +1,7 @@
 package FiniteElementAnalysis
 
+import org.scalatest.FunSuite
+
 /**
   * Created by wsf on 5/28/2017.
   */

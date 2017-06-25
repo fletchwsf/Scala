@@ -247,7 +247,7 @@ object matrix {
     for(j <- inArray ) yield {
       j match {
         case j:Integer => outBuffer.append(f"|${j.toInt}%- 5d ")
-        case j:Double => outBuffer.append(f"|${j.toDouble}%- 15.5f  ")
+        case j:Double => outBuffer.append(f"|${j.toDouble}%- 24.12f  ")
       }
 
     }
