@@ -1,12 +1,10 @@
-package test_FiniteElementAnalysis
+package FiniteElementAnalysis
+
+import org.scalatest.FunSuite
 
 /**
   * Created by wsf on 5/28/2017.
   */
-
-import FiniteElementAnalysis.OneDimensionSolver._
-
-import org.scalatest._
 
 class test_OneDimensionSolver extends  FunSuite{
 

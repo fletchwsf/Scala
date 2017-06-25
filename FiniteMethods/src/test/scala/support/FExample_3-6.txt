@@ -1,6 +1,8 @@
 # 1-D source file
-# run title
-Example X
+# Example 3-6 from Chandurptla 2002
+# expected results
+# Displacement: 0.48247, 1.20697, 0.00005, 0.00005, 1.44900
+# Stress: 21.6, 28.35
 
 # degrees of freedom - DOF
 5
@@ -27,9 +29,15 @@ Example X
 0.0
 30.0
 
+# localDOF - local element DOF use 2 for linear and 3 for quadratic
+2
+
 # element connection array
 1,3,1
 2,4,2
+
+# number of NSPC - single point constraints
+2
 
 # single point constraint array (nodes with zero displacement)
 3

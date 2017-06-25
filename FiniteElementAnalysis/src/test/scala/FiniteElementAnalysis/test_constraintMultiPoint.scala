@@ -1,7 +1,7 @@
 package FiniteElementAnalysis
 
 import FiniteElementAnalysis.FEMethods.addMultiPointConstraints
-import org.scalatest.FunSuite
+import org.scalatest.FunSuite._
 import org.scalatest.Matchers._
 
 /**

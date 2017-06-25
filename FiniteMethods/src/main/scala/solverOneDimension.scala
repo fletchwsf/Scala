@@ -1,23 +1,22 @@
-package FiniteElementAnalysis
-
 /**
-  * Created by wsf on 5/7/2017.
+  * Created by wsf on 6/24/2017.
   */
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
-import calculateStress._
+import calculateStress.stress
 import matrix._
+import stiffnessMatrix._
 
-object FEMethods {
+object solverOneDimension {
 
   def kBuild( con : Array[Array[Int]],
-                DOF : Int,
-                eArea : Array[Double],
-                eLength : Array[Double],
-                eModulus : Array[Double]
-              ) : Array[Array[Double]] = {
+              DOF : Int,
+              eArea : Array[Double],
+              eLength : Array[Double],
+              eModulus : Array[Double]
+            ) : Array[Array[Double]] = {
     val K = Array.ofDim[Double](DOF, DOF)
     var sign = 1
 
@@ -36,8 +35,8 @@ object FEMethods {
 
   def addSinglePointConstraints(
                                  kMatrix : Array[Array[Double]],
-                                  constraints : Array[Int],
-                                  C: Double): Array[Array[Double]] = {
+                                 constraints : Array[Int],
+                                 C: Double): Array[Array[Double]] = {
 
     for(i <- constraints.indices)
       kMatrix(constraints(i))(constraints(i)) += C
@@ -80,13 +79,14 @@ object FEMethods {
     }
     lineNum
   }
-  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
-    val anArray = Array.ofDim[Int](nElements, nElements)
+  def loadArray(lineName: String, nElements: Int, localDOF: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
+    val anArray = Array.ofDim[Int](nElements, localDOF)
     val startsAt = findLineFor(lineName, fileNameBuffer)
-    for ( i <- anArray.indices) {
+    for ( i <- 0 until nElements ) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
-      anArray(i)(0) = col(1).toInt - 1
-      anArray(i)(1) = col(2).toInt - 1
+      for (j <- 0 until localDOF) {
+        anArray(i)(j) = col(j+1).toInt - 1
+      }
     }
     println(s"loading array:$lineName")
     matrix.printArray(anArray)
@@ -126,15 +126,32 @@ object FEMethods {
     }
     val elementCount : Int = elementCount_string.toInt
 
+    // get the count for the number of elements with a single point constraint
+    var NSPC_string = new String
+    for (i <- inputFile.indices){
+      if (inputFile(i).contains("NSPC")) NSPC_string = inputFile(i+1)
+    }
+    val NSPC : Int = NSPC_string.toInt
+    println(s"Number of elements with single point constraints:$NSPC")
+
+    // get the number for the local DOF
+    var localDOF_string = new String
+    for (i <- inputFile.indices){
+      if (inputFile(i).contains("localDOF")) localDOF_string = inputFile(i+1)
+    }
+    val localDOF : Int = localDOF_string.toInt
+    println(s"Local DOF value (2 or 3): $localDOF")
+
     // read in the nodes with single point constraints
-    val constraints = Array.ofDim[Int](elementCount)
+    val constraints = Array.ofDim[Int](NSPC)
     val lineN = findLineFor("constraint", inputFile)
     for (i <- constraints.indices)
       constraints(i) = inputFile(i + lineN).toInt - 1
 
     // Setup the element connection table array
-    var connectionTable = Array.ofDim[Int](elementCount,elementCount)
-    connectionTable = loadArray("connection", elementCount, inputFile)
+    // todo - make connection table width a function of localDOF
+    var connectionTable = Array.ofDim[Int](elementCount,localDOF)
+    connectionTable = loadArray("connection", elementCount, localDOF, inputFile)
 
     // Setup the element cross-sectional area array
     var eArea = Array.ofDim[Double](elementCount)
@@ -161,27 +178,30 @@ object FEMethods {
     }
     val NMP : Int = nMultiPointsCount_string.toInt
     println(s"number of multipoint nodes:$NMP")
-    //  read in the multi-point constraints
+
+
+    //  read in the multi-point constraints if they are being used
     val mpNodes = Array.ofDim[Int](NMP, 2)
     val mpQRatio = Array.ofDim[Double](NMP)
-    val startsAt = findLineFor("multipoint", inputFile)
-    for ( i <- mpNodes.indices) {
-      val col = inputFile(i + startsAt).split(",").map(_.trim)
-      mpNodes(i)(0) = col(0).toInt - 1
-      mpNodes(i)(1) = col(1).toInt - 1
-      mpQRatio(i) = col(2).toDouble
+    if( NMP > 0 ) {
+      val startsAt = findLineFor("multipoint", inputFile)
+      for (i <- mpNodes.indices) {
+        val col = inputFile(i + startsAt).split(",").map(_.trim)
+        mpNodes(i)(0) = col(0).toInt - 1
+        mpNodes(i)(1) = col(1).toInt - 1
+        mpQRatio(i) = col(2).toDouble
+      }
+      println("Multipoint displacement vector")
+      printVector(mpQRatio)
+      println("Multipoint element numbers")
+      matrix.printArray(mpNodes)
     }
-    println("Multipoint displacement vector")
-    printVector(mpQRatio)
-    println("Multipoint element numbers")
-    matrix.printArray(mpNodes)
-
 
     println("---------------------------------------------------")
 
     // Build the initial stiffness stiffness matrix
     var Kg = Array.ofDim[Double](DOF,DOF)
-    Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
+    Kg = stiffnessMatrix.kBuild(connectionTable, DOF, localDOF, eArea, eLength, eModulus)
     println("initialized stiffness array")
     matrix.printArray(Kg)
 
@@ -203,39 +223,30 @@ object FEMethods {
       matrix.printArray(Kg)
     } else Kg
 
+
     // solve for the displacement vector
     val Q2 = matrix.gaussSeidel(Kg, p, 0.0000000000001)
+    println("---------------------------------------------------------------------------------------")
+    println("element displacement")
+    matrix.printVector(Q2)
 
     // solve for stress
-    println("element stress")
-    println("expected: | 21.6 | 28.35 |")
-    val eStress = calculateStress.stress(connectionTable, Q2, eLength, eModulus)
+    val eStress = stress(connectionTable, Q2, eLength, eModulus)
     //matrix.printVector(eStress.map( _ * 1000.0))
+    println("element stress")
     matrix.printVector(eStress)
-    println("-------------------------------------------------------")
+    println("---------------------------------------------------------------------------------------")
     // Return the displacement vector
     Q2
-
-
 
   }
   def main(args: Array[String]): Unit = {
 
-   var inputFileName = "D:\\Scala\\FiniteElementAnalysis\\src\\test\\scala\\test_FiniteElementAnalysis\\FExample_3-6.txt"
+    println(s"Running file named:$args(1)")
+    println("need to get expected results from input file heading")
 
     // solve for element displacement
-   // var Q : Array[Double] = solverOneDOF(args(1))
-   var Q : Array[Double] = solverOneDOF(inputFileName)
-    println(s"Running file named:$args(1)")
-    println("displacement array - Q")
-    matrix.printVector(Q)
-
-    println("need to get expected results from input file heading")
-    println("missing function to calculate stresses")
-
-
-
-
+    var Q : Array[Double] = solverOneDOF(args(1))
 
   }
 }
