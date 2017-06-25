@@ -131,6 +131,15 @@ object solverOneDimension {
       if (inputFile(i).contains("NSPC")) NSPC_string = inputFile(i+1)
     }
     val NSPC : Int = NSPC_string.toInt
+    println(s"Number of elements with single point constraints:$NSPC")
+
+    // get the number for the local DOF
+    var localDOF_string = new String
+    for (i <- inputFile.indices){
+      if (inputFile(i).contains("localDOF")) localDOF_string = inputFile(i+1)
+    }
+    val localDOF : Int = localDOF_string.toInt
+    println(s"Local DOF value (2 or 3): $localDOF")
 
     // read in the nodes with single point constraints
     val constraints = Array.ofDim[Int](NSPC)
@@ -139,6 +148,7 @@ object solverOneDimension {
       constraints(i) = inputFile(i + lineN).toInt - 1
 
     // Setup the element connection table array
+    // todo - make connection table width a function of localDOF
     var connectionTable = Array.ofDim[Int](elementCount,elementCount)
     connectionTable = loadArray("connection", elementCount, inputFile)
 
@@ -190,7 +200,6 @@ object solverOneDimension {
 
     // Build the initial stiffness stiffness matrix
     var Kg = Array.ofDim[Double](DOF,DOF)
-    val localDOF = 2
     Kg = stiffnessMatrix.kBuild(connectionTable, DOF, localDOF, eArea, eLength, eModulus)
     println("initialized stiffness array")
     matrix.printArray(Kg)
