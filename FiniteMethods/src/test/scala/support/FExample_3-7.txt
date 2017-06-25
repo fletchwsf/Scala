@@ -27,7 +27,7 @@ Example X
 20.81
 0.0
 
-# Local DOF - local element DOF use 2 for linear and 3 for quadratic
+# localDOF - local element DOF use 2 for linear and 3 for quadratic
 3
 
 # element connection array
