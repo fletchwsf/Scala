@@ -29,6 +29,9 @@
 0.0
 30.0
 
+# Local DOF - local element DOF use 2 for linear and 3 for quadratic
+2
+
 # element connection array
 1,3,1
 2,4,2

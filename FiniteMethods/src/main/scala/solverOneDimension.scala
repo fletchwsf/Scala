@@ -190,15 +190,10 @@ object solverOneDimension {
 
     // Build the initial stiffness stiffness matrix
     var Kg = Array.ofDim[Double](DOF,DOF)
-    //Kg = kBuild(connectionTable, DOF, eArea, eLength, eModulus)
-    Kg = stiffnessMatrix.kBuild(connectionTable, DOF, 2, eArea, eLength, eModulus)
+    val localDOF = 2
+    Kg = stiffnessMatrix.kBuild(connectionTable, DOF, localDOF, eArea, eLength, eModulus)
     println("initialized stiffness array")
     matrix.printArray(Kg)
-
-
-
-
-
 
     // Establish the penalty stiffness based on the maximum stiffness in the matrix
     val C : Double  = matrix.max(Kg) * 10000.0
