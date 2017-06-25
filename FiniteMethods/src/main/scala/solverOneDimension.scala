@@ -79,13 +79,14 @@ object solverOneDimension {
     }
     lineNum
   }
-  def loadArray(lineName: String, nElements: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
-    val anArray = Array.ofDim[Int](nElements, nElements)
+  def loadArray(lineName: String, nElements: Int, localDOF: Int, fileNameBuffer: ListBuffer[String] ): Array[Array[Int]] = {
+    val anArray = Array.ofDim[Int](nElements, localDOF)
     val startsAt = findLineFor(lineName, fileNameBuffer)
-    for ( i <- anArray.indices) {
+    for ( i <- 0 until nElements ) {
       val col = fileNameBuffer(i + startsAt).split(",").map(_.trim)
-      anArray(i)(0) = col(1).toInt - 1
-      anArray(i)(1) = col(2).toInt - 1
+      for (j <- 0 until localDOF) {
+        anArray(i)(j) = col(j+1).toInt - 1
+      }
     }
     println(s"loading array:$lineName")
     matrix.printArray(anArray)
@@ -150,7 +151,7 @@ object solverOneDimension {
     // Setup the element connection table array
     // todo - make connection table width a function of localDOF
     var connectionTable = Array.ofDim[Int](elementCount,localDOF)
-    connectionTable = loadArray("connection", elementCount, inputFile)
+    connectionTable = loadArray("connection", elementCount, localDOF, inputFile)
 
     // Setup the element cross-sectional area array
     var eArea = Array.ofDim[Double](elementCount)

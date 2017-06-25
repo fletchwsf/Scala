@@ -49,7 +49,7 @@ class atpSolverOneDimensionTest extends FunSuite {
     println(s"Test File $testFile")
     val result = solverOneDimension.solverOneDOF(testFile)
     var answer = Array.ofDim[Double](5)
-    answer(0) = 0.0
+    answer(0) = 0.000001
     answer(1) = 0.5735
     answer(2) = 0.10706
     answer(3) = 1.41147
@@ -58,7 +58,7 @@ class atpSolverOneDimensionTest extends FunSuite {
     assert(answer.length === result.length, "the result array length of $result.length, was unexpected")
     val tolerance = 0.1
     for ( i <- result.indices)
-      assert(result(i) === answer(i) +- answer(i)*tolerance , "example 3.7 displacement calculation is wrong")
+      assert(result(i) === answer(i) +- tolerance , "example 3.7 displacement calculation is wrong")
 
   }
 
