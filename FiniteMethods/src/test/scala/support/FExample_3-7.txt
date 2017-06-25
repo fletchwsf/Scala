@@ -1,0 +1,43 @@
+# 1-D source file
+# run title
+Example X
+
+# degrees of freedom - DOF
+5
+
+# number of elements - NE
+2
+
+# element modulus of elasticity - one row per NE
+100000000.0
+100000000.0
+
+# element area array - one row per NE
+0.6
+0.6
+
+# element length array - one row per NE
+21.0
+21.0
+
+# element force array - one row per DOF
+0.0
+6.94
+0.0
+20.81
+0.0
+
+# element connection array
+1,1,3,2
+2,3,5,4
+
+# number of NSPC - single point constraints
+1
+
+# single point constraint array (nodes with zero displacement)
+1
+
+# number of NMP
+0
+
+# multipoint array
