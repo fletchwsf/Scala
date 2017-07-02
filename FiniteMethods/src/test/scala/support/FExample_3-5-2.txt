@@ -1,0 +1,48 @@
+# 1-D source file
+# Example 3-5-2 from Chandurptla 2002
+# Expected results
+# displacement q: 7.49985E-5, 1.500045, 1.200015 mm
+# stress: 199.996, -40.004 MPa
+
+
+# degrees of freedom - DOF
+3
+
+# number of elements - NE
+2
+
+# element modulus of elasticity - one row per NE
+20000
+20000
+
+# element area array - one row per NE
+250
+250
+
+# element length array - one row per NE
+150
+150
+
+# element force array - one row per DOF
+0.0
+60000.0
+-12000.0
+
+# localDOF - local element DOF use 2 for linear and 3 for quadratic
+2
+
+# element connection array
+1,1,2
+2,2,3
+
+# number of NSPC - single point constraints
+1
+
+# single point constraint array (nodes with zero displacement)
+1
+
+# number of NMP
+0
+
+# multipoint array
+0
