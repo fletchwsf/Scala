@@ -17,15 +17,19 @@ Example X
 0.6
 
 # element length array - one row per NE
+63.0
+63.0
+
+
 21.0
 21.0
 
 # element force array - one row per DOF
-0.0
-6.94
-0.0
-20.81
-0.0
+14.57
+58.26
+58.26
+174.79
+43.70
 
 # localDOF - local element DOF use 2 for linear and 3 for quadratic
 3
