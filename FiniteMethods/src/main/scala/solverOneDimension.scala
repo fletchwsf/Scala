@@ -149,7 +149,6 @@ object solverOneDimension {
       constraints(i) = inputFile(i + lineN).toInt - 1
 
     // Setup the element connection table array
-    // todo - make connection table width a function of localDOF
     var connectionTable = Array.ofDim[Int](elementCount,localDOF)
     connectionTable = loadArray("connection", elementCount, localDOF, inputFile)
 
@@ -200,6 +199,9 @@ object solverOneDimension {
     println("---------------------------------------------------")
 
     // Build the initial stiffness stiffness matrix
+    //    first: if the local DOF is 3, then multiply the element length by 3
+    if (localDOF == 3) eLength.map(_ * 3.0 )
+
     var Kg = Array.ofDim[Double](DOF,DOF)
     Kg = stiffnessMatrix.kBuild(connectionTable, DOF, localDOF, eArea, eLength, eModulus)
     println("initialized stiffness array")
